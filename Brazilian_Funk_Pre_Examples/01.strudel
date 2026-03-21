@@ -275,5 +275,40 @@ stack(
 
 ).gain(0.8).slow(1.12).lpf(1320).room(0.08).gain(1.08).swing(0.7)
 
+//8.Prompt: apply an arrangement based on brazilian funk bar divisions.
+// ARRANGEMENT - Brazilian Funk / Baile Funk Rio - Surround System
+
+setcpm(130)
+
+// === LAYERS ===
+const kick = s("bd*4").every(4, x => x.fast(2)).orbit(0)
+const snare = s("~ cp ~ cp").sometimes(x => x.crush(8)).pan(sine.range(0,1).slow(8)).orbit(1)
+const hats = s("hh*8, ~ hh ~ hh, ~ ~ oh ~").gain(0.4).hpf(5000).every(3, x => x.rev()).pan(sine.range(0,1).slow(4)).orbit(2)
+const bass = note("A2 A2 A2 A2").s("sawtooth").cutoff(800).sometimes(x => x.distort(0.3)).orbit(3)
+const chords = note("<A E F#m D>").s("piano").struct("1 ~ 1 ~").release(0.1).gain(0.6).pan(saw.range(-1,1).slow(16)).orbit(4)
+const vox = note("c4 b5 a4 d6 e4 d4 e6 f6").s("triangle").room(0.3).gain(0.5).every(2, x => x.add(note(12))).pan(sine.range(0,0.4).slow(6)).orbit(5)
+const lead = note("d4 c3 d4 c4 b4 a4 g4 f4").s("triangle").struct("~ 1 ~ 1 1 ~ 1 ~").delay(0.25).room(0.4).gain(0.5).rarely(x => x.crush(6)).pan(sine.range(0.6,1).slow(6)).orbit(6)
+
+// === ARRANGEMENT ===
+arrange(
+  // INTRO (8 cycles) - kick + hats only, building tension
+  [8,  stack(kick, hats).gain(0.6)],
+
+  // BUILD (8 cycles) - add bass and snare
+  [8,  stack(kick, snare, hats, bass).gain(0.7)],
+
+  // DROP (16 cycles) - full stack, maximum dancefloor energy
+  [16, stack(kick, snare, hats, bass, chords, vox, lead).gain(0.8).swing(0.7)],
+
+  // BREAK (8 cycles) - strip to chords + vox, let the crowd breathe
+  [8,  stack(chords, vox, bass.gain(0.3)).lpf(600).room(0.4).gain(0.5)],
+
+  // BUILD 2 (4 cycles) - hats + bass creep back in
+  [4,  stack(kick, hats, bass, vox).gain(0.7).swing(0.5)],
+
+  // OUTRO / RE-DROP (16 cycles) - full stack back, harder swing
+  [16, stack(kick, snare, hats, bass, chords, vox, lead).gain(0.9).swing(0.8).room(0.1)]
+
+).lpf(1320)
 
 
