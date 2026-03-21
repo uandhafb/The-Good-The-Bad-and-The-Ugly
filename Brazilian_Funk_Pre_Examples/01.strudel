@@ -205,5 +205,28 @@ stack(
 
 ).gain(0.8).slow(1.12).lpf(930).room(0.21).fast(1.08).lpf(1320).room(0.08).gain(1.08).swing(0.7)
 
+//8.Prompt: apply orbits for a surround system
+//Model's Reasoning: Surround system mapped across 7 orbits:
+                                                                                        
+  ┌───────┬──────────────────┬─────────────────────────────────────┐                       
+  │ Orbit │ Speaker Position │                Layer                │
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 0     │ Center           │ Kick — anchored front               │
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 1     │ Front L/R        │ Snare/clap — panning slowly         │                       
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 2     │ Rear L/R         │ Hi-hats — sweeping behind the crowd │
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 3     │ Subwoofer (LFE)  │ Bass — pure low-end punch           │
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 4     │ Front Wide       │ Chords — spreading across the stage │
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 5     │ Surround Left    │ Vocal melody — circling left        │
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 6     │ Surround Right   │ Lead melody — circling right        │
+  └───────┴──────────────────┴─────────────────────────────────────┘                       
+
+//Each orbit routes to a separate audio output — make sure your DAW/audio interface has multi-channel output configured to catch all 7 channels. Want to save this or push itfurther?                                                             
+
 
 
