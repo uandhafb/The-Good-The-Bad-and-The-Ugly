@@ -226,7 +226,54 @@ stack(
   │ 6     │ Surround Right   │ Lead melody — circling right        │
   └───────┴──────────────────┴─────────────────────────────────────┘                       
 
-//Each orbit routes to a separate audio output — make sure your DAW/audio interface has multi-channel output configured to catch all 7 channels. Want to save this or push itfurther?                                                             
+//Each orbit routes to a separate audio output — make sure your DAW/audio interface has multi-channel output configured to catch all 7 channels. Want to save this or push it further?
+
+// brazilian funk pattern in A at 130 BPM - surround system orbits
+setcpm(130)
+
+stack(
+  // Orbit 0 - CENTER: Kick drum (front center speaker)
+  s("bd*4")
+    .every(4, x => x.fast(2))
+    .orbit(0),
+
+  // Orbit 1 - FRONT LEFT/RIGHT: Snare + clap (stereo front)
+  s("~ cp ~ cp")
+    .sometimes(x => x.crush(8))
+    .pan(sine.range(0, 1).slow(8))
+    .orbit(1),
+
+  // Orbit 2 - REAR LEFT/RIGHT: Hi-hats sweep behind audience
+  s("hh*8, ~ hh ~ hh, ~ ~ oh ~")
+    .gain(0.4).hpf(5000)
+    .every(3, x => x.rev())
+    .pan(sine.range(0, 1).slow(4))
+    .orbit(2),
+
+  // Orbit 3 - SUBWOOFER / LFE: Bass (low end punch)
+  note("A2 A2 A2 A2").s("sawtooth").cutoff(800)
+    .sometimes(x => x.distort(0.3))
+    .orbit(3),
+
+  // Orbit 4 - FRONT WIDE: Chords spread across front stage
+  note("<A E F#m D>").s("piano").struct("1 ~ 1 ~").release(0.1).gain(0.6)
+    .pan(saw.range(-1, 1).slow(16))
+    .orbit(4),
+
+  // Orbit 5 - SURROUND LEFT: Anitta vocal melody circling left
+  note("c4 b5 a4 d6 e4 d4 e6 f6").s("triangle").room(0.3).gain(0.5)
+    .every(2, x => x.add(note(12)))
+    .pan(sine.range(0, 0.4).slow(6))
+    .orbit(5),
+
+  // Orbit 6 - SURROUND RIGHT: Lead melody circling right
+  note("d4 c3 d4 c4 b4 a4 g4 f4").s("triangle")
+    .struct("~ 1 ~ 1 1 ~ 1 ~").delay(0.25).room(0.4).gain(0.5)
+    .rarely(x => x.crush(6))
+    .pan(sine.range(0.6, 1).slow(6))
+    .orbit(6)
+
+).gain(0.8).slow(1.12).lpf(1320).room(0.08).gain(1.08).swing(0.7)
 
 
 
