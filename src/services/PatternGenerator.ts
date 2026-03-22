@@ -1,5 +1,7 @@
 import { MusicTheory } from './MusicTheory.js';
 
+type FunkMode = 'major' | 'minor' | 'dorian' | 'mixolydian' | 'harmonic_minor' | 'melodic_minor';
+
 export class PatternGenerator {
   private theory = new MusicTheory();
 
@@ -24,7 +26,53 @@ export class PatternGenerator {
   private getFifth(root: string): string { return this.getInterval(root, 7); }
   private getMinorThird(root: string): string { return this.getInterval(root, 3); }
   private getMinorSeventh(root: string): string { return this.getInterval(root, 10); }
+  private normalizeRoot(root: string): string {
+    const cleaned = root.toLowerCase().replace(/[^a-gb#]/g, '');
+    const match = cleaned.match(/^[a-g](?:#|b)?/);
+    const normalized = match?.[0] || 'f';
+    return normalized === '#' || normalized === 'b' ? 'f' : normalized;
+  }
 
+  private toTheoryRoot(root: string): string {
+    const flatToSharp: Record<string, string> = {
+      'db': 'C#',
+      'eb': 'D#',
+      'gb': 'F#',
+      'ab': 'G#',
+      'bb': 'A#',
+    };
+    const normalized = this.normalizeRoot(root);
+    return (flatToSharp[normalized] || normalized).toUpperCase();
+  }
+
+  private buildScaleForMode(root: string, mode: FunkMode): string[] {
+    const theoryMap: Record<FunkMode, 'major' | 'minor' | 'dorian' | 'mixolydian' | 'harmonic_minor' | 'melodic_minor'> = {
+      major: 'major',
+      minor: 'minor',
+      dorian: 'dorian',
+      mixolydian: 'mixolydian',
+      harmonic_minor: 'harmonic_minor',
+      melodic_minor: 'melodic_minor'
+    };
+
+    try {
+      return this.theory.generateScale(this.toTheoryRoot(root), theoryMap[mode]).map(note => note.toLowerCase());
+    } catch (_error) {
+      return this.theory.generateScale('C', 'minor').map(note => note.toLowerCase());
+    }
+  }
+
+  private resolveMode(mode: FunkMode = 'minor'): FunkMode {
+    return ['major', 'minor', 'dorian', 'mixolydian', 'harmonic_minor', 'melodic_minor'].includes(mode) ? mode : 'minor';
+  }
+
+  private buildScalePattern(scale: string[], steps: number[], octave: number): string {
+    return steps.map(step => `${scale[(step % scale.length + scale.length) % scale.length]}${octave}`).join(' ');
+  }
+
+  private voicingFromIntervals(root: string, intervals: number[], octave: number): string {
+    return intervals.map(interval => `${this.getInterval(root, interval)}${octave}`).join(' ');
+  }
   /**
    * Generates a drum pattern for a given style
    * @param style - Music style (e.g., 'techno', 'house', 'dnb', 'ambient')
@@ -120,6 +168,35 @@ export class PatternGenerator {
           s("[~ hh]*8").gain(0.45).hpf(4000),
           s("~ ~ oh ~ ~ ~ ~ oh:2").gain(0.25).room(0.3)
         ).swing(0.1)`
+      ],
+      brazilian_funk_ousadia: [
+        // Minimal - bumbo downbeat and variation 1
+        `stack(
+           s("lt")
+           .struct ("[1 0 0 0]")
+           .room(1).size(7),
+  
+           s("[~] [~] [~] [~] [~] [lt lt@2 lt] [lt lt@2 lt] [lt lt@2 lt] ")
+           .room(0),
+        )`,
+        // Medium - bumbo downbeat and variation 2
+        `stack(
+           s("lt")
+           .struct ("[1 0 0 0]")
+           .room(1).size(7),
+  
+           s("[~] [~] [~] [~] [~] [lt lt@2 lt] [~] [[lt lt] [lt lt lt lt lt]]  ")
+           .room(0)
+           .delayfb(1),
+        )`,
+        // Complex - bumbo + layer
+        `stack(
+          s("lt")
+           .struct ("[1 0 0 0]")
+           .room(1).size(7),
+
+          sound("[~ ~ ~ cp][~ cp] [~ ~] [cp ~ ] [~] [~ cp] [~] [cp ~]"),
+        )`
       ]
     };
 
@@ -140,7 +217,10 @@ export class PatternGenerator {
       'premier': 'boom_bap',
       'alchemist': 'boom_bap',
       'daringer': 'boom_bap',
-      'hitboy': 'boom_bap'
+      'hitboy': 'boom_bap',
+      'brazilian_funk': 'brazilian_funk_ousadia',
+      'ousadia_brazilian_funk': 'brazilian_funk_ousadia',
+      'minimalist_brazilian_funk': 'brazilian_funk_ousadia'
     };
 
     const resolvedStyle = styleMap[style.toLowerCase()] || style.toLowerCase();
@@ -148,6 +228,42 @@ export class PatternGenerator {
     const index = Math.min(Math.floor(complexity * stylePatterns.length), stylePatterns.length - 1);
     return stylePatterns[index];
   }
+  generateFunkPattern(
+  key: string = 'F',
+  tempo: number = 140,
+  density: string = 'medium',
+  options: Record<string, unknown> = {}
+): { pattern: string; metadata?: Record<string, unknown>; layers?: Record<string, string> } {
+  const safeTempo = Math.max(120, Math.min(150, Math.round(tempo)));
+  const safeDensity = ['low', 'medium', 'high'].includes(density) ? density : 'medium';
+  const safeMood = ['ambient', 'groove', 'melancholic', 'sunny', 'dark', 'dance'].includes(String(options.mood || 'groove'))
+    ? String(options.mood || 'groove')
+    : 'groove';
+
+  const pattern = this.generateBrazilianFunkOusadia(key, safeTempo);
+  const result: { pattern: string; metadata?: Record<string, unknown>; layers?: Record<string, string> } = { pattern };
+
+  if (options.includeMetadata !== false) {
+    result.metadata = {
+      style: 'brazilian_funk_ousadia',
+      key: this.normalizeRoot(key).toUpperCase(),
+      tempo: safeTempo,
+      density: safeDensity,
+      mood: safeMood,
+      mode: 'minor'
+    };
+  }
+
+  if (options.includeLayers === true) {
+    result.layers = {
+      drums: 'bumbo1 + bumbo2 + bumbo3 + clave',
+      bass: 'grave',
+      harmony: 'intro'
+    };
+  }
+
+  return result;
+}
 
   /**
    * Generates a bassline pattern for a given key and style
@@ -295,20 +411,30 @@ export class PatternGenerator {
       'premier': 'boom_bap',
       'alchemist': 'boom_bap',
       'daringer': 'boom_bap',
-      'hitboy': 'boom_bap'
+      'hitboy': 'boom_bap',
+      'brazilian_funk': 'brazilian_funk_ousadia',
+      'ousadia_brazilian_funk': 'brazilian_funk_ousadia',
+      'minimalist_brazilian_funk': 'brazilian_funk_ousadia'
     };
 
     const resolvedStyle = styleMap[style.toLowerCase()] || style.toLowerCase();
 
-    // Use specialized generators for new genres
-    switch (resolvedStyle) {
+    
+
+  // Use specialized generators for new genres
+     switch (resolvedStyle) {
       case 'intelligent_dnb':
         return this.generateIntelligentDnB(key, bpm || 170);
       case 'trip_hop':
         return this.generateTripHop(key, bpm || 90);
       case 'boom_bap':
         return this.generateBoomBap(key, bpm || 92);
-    }
+      case 'brazilian_funk_ousadia': {
+    const funkRoot = key.replace(/m$/i, '') || 'C';
+    const funkBpm = bpm === 120 ? 130 : bpm;
+    return this.generateBrazilianFunkOusadia(funkRoot, funkBpm);
+  }
+}
 
     // Default generation for other styles
     const drums = this.generateDrumPattern(resolvedStyle, 0.7);
@@ -592,6 +718,68 @@ stack(
     .room(0.3)
     .lpf(3500)
 ).swing(0.08)`;
+  }
+
+  // ========================================
+  // BRAZILIAN FUNK OUSADIA GENERATOR
+  // Style: Funk SP / Baile Ousadia
+  // ========================================
+  private generateBrazilianFunkOusadia(key: string, tempo: number): string {
+    const safeKey = this.normalizeRoot(key);
+    const safeTempo = Math.max(120, Math.min(150, Math.round(tempo)));
+    const fourth = this.getFourth(safeKey);
+    const fifth = this.getFifth(safeKey);
+    const seventh = this.getMinorSeventh(safeKey);
+
+    return `// Brazilian Funk Ousadia in ${safeKey.toUpperCase()} at ${safeTempo} BPM
+// Style: Funk Carioca / Baile Funk
+samples('github:tidalcycles/dirt-samples')
+setcpm(${safeTempo}/4/2)
+
+let intro = stack(
+  note("[${fifth}4 ${safeKey}5] [${fifth}4 ${safeKey}5] [${fourth}4 ${safeKey}5] [${safeKey}4 ${safeKey}5] [${seventh}4 ${safeKey}5] [${fourth}4 ${safeKey}5] [${safeKey}4 ${safeKey}5] [${fourth}4 ${safeKey}5]")
+    .s("gm_glockenspiel:0")
+    .room(3)
+    .sz(3)
+    .pan(sine.slow(3))
+)
+
+let bumbo1 = stack(
+  s("lt")
+    .struct("[1 0 0 0]")
+    .gain(1.0)
+    .room(1)
+    .size(7)
+)
+
+let bumbo2 = stack(
+  s("[~] [~] [~] [~] [~] [lt lt@2 lt] [lt lt@2 lt] [lt lt@2 lt]")
+    .pan(rand)
+    .room(0)
+)
+
+let bumbo3 = s("[~] [~] [~] [~] [~] [lt lt@2 lt] [~] [[lt lt] [lt lt lt lt lt]]")
+  .pan(rand)
+  .delayfb(1)
+
+let clave = stack(
+  sound("[~ ~ ~ cp][~ cp] [~ ~] [cp ~] [~] [~ cp] [~] [cp ~]")
+)
+
+let grave = stack(
+  note("[${safeKey}2@5 ~ ~ ~]")
+    .s("gm_fx_soundtrack:0")
+    .room(2)
+)
+
+$: stack(
+  intro,
+  bumbo1,
+  bumbo2,
+  bumbo3,
+  clave,
+  grave
+)`;
   }
 
   /**
