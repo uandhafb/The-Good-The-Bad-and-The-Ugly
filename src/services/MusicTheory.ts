@@ -61,7 +61,7 @@ export class MusicTheory {
       throw new Error(`Invalid root note: ${root}`);
     }
 
-      const scale = this.scales[scaleName];
+    const scale = this.scales[scaleName];
     if (!scale) {
       throw new Error(`Invalid scale: ${scaleName}`);
     }
@@ -208,12 +208,25 @@ export class MusicTheory {
     if (!parsed) return ['c3', 'e3', 'g3'];
 
     const root = this.normalizeNote(`${parsed[1].toUpperCase()}${parsed[2] || ''}`);
-    const rawType = (parsed[3] || '').replace(/\s+/g, '').toLowerCase();
+    const cleanedType = (parsed[3] || '').replace(/\s+/g, '');
+    // Preserve jazz chart major notation (M7/M9/M11/M13) before lowercasing.
+    const normalizedType = cleanedType.match(/^M(7|9|11|13)$/)
+      ? `maj${cleanedType.slice(1)}`
+      : cleanedType.toLowerCase();
     const aliases: Record<string, string> = {
       '': '',
       maj: '',
+      major: '',
+      major7: 'maj7',
+      major9: 'maj9',
+      major11: 'maj11',
+      major13: 'maj13',
       min: 'm',
       '-': 'm',
+      '-7': 'm7',
+      '-9': 'm9',
+      '-11': 'm11',
+      '-13': 'm13',
       min7: 'm7',
       min9: 'm9',
       min11: 'm11',
@@ -223,7 +236,7 @@ export class MusicTheory {
       dom11: '11',
       dom13: '13'
     };
-    const type = aliases[rawType] ?? rawType;
+    const type = aliases[normalizedType] ?? normalizedType;
 
     const intervals: Record<string, number[]> = {
       '': [0, 4, 7], // major
