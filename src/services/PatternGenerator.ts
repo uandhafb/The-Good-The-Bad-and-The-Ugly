@@ -219,6 +219,8 @@ export class PatternGenerator {
       'daringer': 'boom_bap',
       'hitboy': 'boom_bap',
       'brazilian_funk': 'brazilian_funk_ousadia',
+      'funk ousadia': 'brazilian_funk_ousadia',
+      'brazilian funk ousadia': 'brazilian_funk_ousadia',
       'ousadia_brazilian_funk': 'brazilian_funk_ousadia',
       'minimalist_brazilian_funk': 'brazilian_funk_ousadia'
     };
@@ -413,6 +415,8 @@ export class PatternGenerator {
       'daringer': 'boom_bap',
       'hitboy': 'boom_bap',
       'brazilian_funk': 'brazilian_funk_ousadia',
+      'funk ousadia': 'brazilian_funk_ousadia',
+      'brazilian funk ousadia': 'brazilian_funk_ousadia',
       'ousadia_brazilian_funk': 'brazilian_funk_ousadia',
       'minimalist_brazilian_funk': 'brazilian_funk_ousadia'
     };
