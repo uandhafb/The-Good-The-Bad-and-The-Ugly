@@ -27,6 +27,25 @@ export class MusicTheory {
     edm: ['i', 'VI', 'III', 'VII']
   };
 
+/**
+   * Normalizes note names (including flats/sharps).
+   */
+  private normalizeNote(note: string): string {
+    const normalized = note.trim().toUpperCase().replace('♯', '#').replace('♭', 'B');
+    const enharmonicMap: Record<string, string> = {
+      DB: 'C#',
+      EB: 'D#',
+      GB: 'F#',
+      AB: 'G#',
+      BB: 'A#',
+      CB: 'B',
+      FB: 'E',
+      'E#': 'F',
+      'B#': 'C'
+    };
+    return enharmonicMap[normalized] || normalized;
+  }
+
   /**
    * Generates a musical scale from a root note
    * @param root - Root note (e.g., 'C', 'D#', 'F')
@@ -36,12 +55,13 @@ export class MusicTheory {
    */
   generateScale(root: string, scaleName: keyof typeof this.scales): string[] {
     const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-    const rootIndex = noteNames.indexOf(root.toUpperCase());
+    const normalizedRoot = this.normalizeNote(root);
+    const rootIndex = noteNames.indexOf(normalizedRoot);
     if (rootIndex === -1) {
       throw new Error(`Invalid root note: ${root}`);
     }
-    
-    const scale = this.scales[scaleName];
+
+      const scale = this.scales[scaleName];
     if (!scale) {
       throw new Error(`Invalid scale: ${scaleName}`);
     }
@@ -97,10 +117,12 @@ export class MusicTheory {
    */
   getNote(root: string, semitones: number): string {
     const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-    const rootIndex = noteNames.indexOf(root.toUpperCase());
+    const normalizedRoot = this.normalizeNote(root);
+    const rootIndex = noteNames.indexOf(normalizedRoot);
     if (rootIndex === -1) return root;
     return noteNames[(rootIndex + semitones) % 12];
   }
+  
 
   /**
    * Generates a Euclidean rhythm pattern
@@ -182,24 +204,51 @@ export class MusicTheory {
    * // Returns: ['c3', 'e3', 'g3', 'b3']
    */
   private getChordNotes(chord: string): string[] {
-    // Simplified chord parsing - would need more sophisticated implementation
-    const root = chord.replace(/[^A-G#]/g, '');
-    const type = chord.replace(/[A-G#]/g, '');
-    
+    const parsed = chord.trim().match(/^([A-Ga-g])([#b]?)(.*)$/);
+    if (!parsed) return ['c3', 'e3', 'g3'];
+
+    const root = this.normalizeNote(`${parsed[1].toUpperCase()}${parsed[2] || ''}`);
+    const rawType = (parsed[3] || '').replace(/\s+/g, '').toLowerCase();
+    const aliases: Record<string, string> = {
+      '': '',
+      maj: '',
+      min: 'm',
+      '-': 'm',
+      min7: 'm7',
+      min9: 'm9',
+      min11: 'm11',
+      min13: 'm13',
+      dom7: '7',
+      dom9: '9',
+      dom11: '11',
+      dom13: '13'
+    };
+    const type = aliases[rawType] ?? rawType;
+
     const intervals: Record<string, number[]> = {
       '': [0, 4, 7], // major
       'm': [0, 3, 7], // minor
       '7': [0, 4, 7, 10], // dominant 7
       'maj7': [0, 4, 7, 11], // major 7
       'm7': [0, 3, 7, 10], // minor 7
+      '9': [0, 4, 7, 10, 14], // dominant 9
+      'maj9': [0, 4, 7, 11, 14], // major 9
+      'm9': [0, 3, 7, 10, 14], // minor 9
+      '11': [0, 4, 7, 10, 14, 17], // dominant 11
+      'maj11': [0, 4, 7, 11, 14, 17], // major 11
+      'm11': [0, 3, 7, 10, 14, 17], // minor 11
+      '13': [0, 4, 7, 10, 14, 21], // dominant 13
+      'maj13': [0, 4, 7, 11, 14, 21], // major 13
+      'm13': [0, 3, 7, 10, 14, 21], // minor 13
       'dim': [0, 3, 6], // diminished
       'aug': [0, 4, 8] // augmented
     };
-    
+
     const chordIntervals = intervals[type] || intervals[''];
     return chordIntervals.map(interval => {
       const note = this.getNote(root, interval);
-      return `${note.toLowerCase()}3`;
+      const octave = 3 + Math.floor(interval / 12);
+      return `${note.toLowerCase()}${octave}`;
     });
   }
 }
