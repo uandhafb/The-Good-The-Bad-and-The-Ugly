@@ -14,7 +14,8 @@ export class InputValidator {
   private static readonly VALID_SCALES = [
     'major', 'minor', 'dorian', 'phrygian', 'lydian', 'mixolydian',
     'aeolian', 'locrian', 'pentatonic', 'blues', 'chromatic',
-    'wholetone', 'harmonic_minor', 'melodic_minor'
+    'wholetone', 'harmonic_minor', 'melodic_minor', 'ritusen',
+    'pelog', 'hirajoshi', 'iwato', 'enigmatic', 'prometheus'
   ];
 
   // Valid chord progression styles from MusicTheory service
@@ -144,6 +145,7 @@ export class InputValidator {
    * - major, minor, pentatonic, blues
    * - Modes: dorian, phrygian, lydian, mixolydian, aeolian, locrian
    * - Special: chromatic, wholetone, harmonic_minor, melodic_minor
+   * - World/extended: ritusen, pelog, hirajoshi, iwato, enigmatic, prometheus
    *
    * @example
    * InputValidator.validateScaleName('major');   // ✓ Valid

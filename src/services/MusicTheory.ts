@@ -13,7 +13,13 @@ export class MusicTheory {
     chromatic: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     wholetone: [0, 2, 4, 6, 8, 10],
     harmonic_minor: [0, 2, 3, 5, 7, 8, 11],
-    melodic_minor: [0, 2, 3, 5, 7, 9, 11]
+    melodic_minor: [0, 2, 3, 5, 7, 9, 11],
+    ritusen: [0, 2, 5, 7, 9],
+    pelog: [0, 1, 3, 7, 8],
+    hirajoshi: [0, 2, 3, 7, 8],
+    iwato: [0, 1, 5, 6, 10],
+    enigmatic: [0, 1, 4, 6, 8, 10, 11],
+    prometheus: [0, 2, 4, 6, 9, 10]
   };
 
   private chordProgressions = {
@@ -41,7 +47,7 @@ export class MusicTheory {
       CB: 'B',
       FB: 'E',
       'E#': 'F',
-      'B#': 'C'
+      'B#': 'C',
     };
     return enharmonicMap[normalized] || normalized;
   }
@@ -86,22 +92,44 @@ export class MusicTheory {
     }
     
     const chordMap: Record<string, string> = {
-      'I': key,
-      'I7': `${key}7`,
+       'I': key,
+       'I7': `${key}7`,
+       'IM7': `${key}maj7`,
+       'IM9': `${key}maj9`,
+       'IM11': `${key}maj11`,
+       'IM13': `${key}maj13`,
+
       'i': `${key.toLowerCase()}m`,
+      'i7': `${key.toLowerCase()}m7`,
+      'i9': `${key.toLowerCase()}m9`,
+      'i11': `${key.toLowerCase()}m11`,
+      'i13': `${key.toLowerCase()}m13`,
+
       'ii': `${this.getNote(key, 2)}m`,
       'IIM7': `${this.getNote(key, 2)}m7`,
+      'IIM9': `${this.getNote(key, 2)}m9`,
+      'IIM11': `${this.getNote(key, 2)}m11`,
+
       'iii': `${this.getNote(key, 4)}m`,
       'III': this.getNote(key, 4),
+
       'IV': this.getNote(key, 5),
       'IV7': `${this.getNote(key, 5)}7`,
+      'IV9': `${this.getNote(key, 5)}9`,
+      'IV11': `${this.getNote(key, 5)}11`,
+
       'V': this.getNote(key, 7),
       'V7': `${this.getNote(key, 7)}7`,
+      'V9': `${this.getNote(key, 7)}9`,
+      'V11': `${this.getNote(key, 7)}11`,
+      'V13': `${this.getNote(key, 7)}13`,
+
       'vi': `${this.getNote(key, 9)}m`,
       'VI': this.getNote(key, 9),
+
       'VII': this.getNote(key, 11),
-      'bVII': this.getNote(key, 10),
-      'IM7': `${key}maj7`
+      'bVII': this.getNote(key, 10)
+      
     };
 
     return progression

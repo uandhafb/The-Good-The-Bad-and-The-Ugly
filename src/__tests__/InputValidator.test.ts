@@ -333,6 +333,13 @@ describe('InputValidator', () => {
       test('should accept melodic_minor scale', () => {
         expect(() => InputValidator.validateScaleName('melodic_minor')).not.toThrow();
       });
+
+      test('should accept extended world scales', () => {
+        const worldScales = ['ritusen', 'pelog', 'hirajoshi', 'iwato', 'enigmatic', 'prometheus'];
+        worldScales.forEach(scale => {
+          expect(() => InputValidator.validateScaleName(scale)).not.toThrow();
+        });
+      });
     });
 
     describe('invalid inputs', () => {

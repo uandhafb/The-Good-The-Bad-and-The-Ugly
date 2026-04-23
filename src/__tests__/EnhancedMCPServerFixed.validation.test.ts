@@ -188,7 +188,8 @@ describe('EnhancedMCPServerFixed - Parameter Validation', () => {
           'major', 'minor', 'dorian', 'phrygian', 'lydian',
           'mixolydian', 'aeolian', 'locrian', 'pentatonic',
           'blues', 'chromatic', 'wholetone', 'harmonic_minor',
-          'melodic_minor'
+          'melodic_minor', 'ritusen', 'pelog', 'hirajoshi',
+          'iwato', 'enigmatic', 'prometheus'
         ];
 
         validScales.forEach(scale => {

@@ -33,6 +33,22 @@ describe('MusicTheory', () => {
       expect(scale).toEqual(['C', 'D#', 'F', 'F#', 'G', 'A#']);
     });
 
+    test('should generate correct extended scales', () => {
+      const expectedScales: Record<string, string[]> = {
+        ritusen: ['C', 'D', 'F', 'G', 'A'],
+        pelog: ['C', 'C#', 'D#', 'G', 'G#'],
+        hirajoshi: ['C', 'D', 'D#', 'G', 'G#'],
+        iwato: ['C', 'C#', 'F', 'F#', 'A#'],
+        enigmatic: ['C', 'C#', 'E', 'F#', 'G#', 'A#', 'B'],
+        prometheus: ['C', 'D', 'E', 'F#', 'A', 'A#']
+      };
+
+      Object.entries(expectedScales).forEach(([scaleName, expectedNotes]) => {
+        const scale = theory.generateScale('C', scaleName as any);
+        expect(scale).toEqual(expectedNotes);
+      });
+    });
+
     test('should generate all modal scales correctly', () => {
       const modes = ['dorian', 'phrygian', 'lydian', 'mixolydian', 'aeolian', 'locrian'];
       modes.forEach(mode => {
@@ -274,7 +290,9 @@ describe('MusicTheory', () => {
 
     test('should work with all supported scales and progressions', () => {
       const scales = ['major', 'minor', 'dorian', 'phrygian', 'lydian', 'mixolydian',
-                     'aeolian', 'locrian', 'pentatonic', 'blues'];
+                     'aeolian', 'locrian', 'pentatonic', 'blues', 'chromatic',
+                     'wholetone', 'harmonic_minor', 'melodic_minor', 'ritusen', 'pelog',
+                     'hirajoshi', 'iwato', 'enigmatic', 'prometheus'];
       const progressions = ['pop', 'jazz', 'blues', 'folk', 'rock', 'classical', 'modal', 'edm'];
 
       scales.forEach(scaleName => {
