@@ -12,7 +12,7 @@ describe('Generate Example Patterns', () => {
 
   beforeEach(() => {
     theory = new MusicTheory();
-    generator = new PatternGenerator(theory);
+    generator = new PatternGenerator();
     validator = new PatternValidator();
   });
 

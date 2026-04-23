@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "typecheck:test": "tsc -p tsconfig.test.json --noEmit",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "test": "jest --coverage",
@@ -43,7 +44,7 @@
     "playwright": "^1.40.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",

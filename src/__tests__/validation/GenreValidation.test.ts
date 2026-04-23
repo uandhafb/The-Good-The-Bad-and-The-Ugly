@@ -9,7 +9,7 @@ describe('Genre Validation Suite', () => {
 
   beforeEach(() => {
     theory = new MusicTheory();
-    generator = new PatternGenerator(theory);
+    generator = new PatternGenerator();
     validator = new PatternValidator();
   });
 

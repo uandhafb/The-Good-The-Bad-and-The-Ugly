@@ -18,4 +18,12 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     'no-console': ['warn', { allow: ['error'] }],
   },
+  overrides: [
+    {
+      files: ['src/__tests__/**/*.ts', 'tests/**/*.ts', 'tests/**/*.js'],
+      env: {
+        jest: true,
+      },
+    },
+  ],
 };
