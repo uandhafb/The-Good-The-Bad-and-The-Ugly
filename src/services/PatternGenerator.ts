@@ -2,8 +2,56 @@ import { MusicTheory } from './MusicTheory.js';
 
 type FunkMode = 'major' | 'minor' | 'dorian' | 'mixolydian' | 'harmonic_minor' | 'melodic_minor';
 
+type ScaleName =
+  | 'major' | 'minor' | 'dorian' | 'phrygian' | 'lydian' | 'mixolydian'
+  | 'aeolian' | 'locrian' | 'pentatonic' | 'blues' | 'chromatic'
+  | 'wholetone' | 'harmonic_minor' | 'melodic_minor'
+  | 'ritusen' | 'pelog' | 'hirajoshi' | 'iwato' | 'enigmatic' | 'prometheus';
+
+type ScaleCategory = 'light' | 'neutral' | 'dark' | 'mystic' | 'game' | 'fantasy';
+
+type PatternOptions = {
+  scale?: ScaleName;
+  tags?: string[];
+};
+
 export class PatternGenerator {
   private theory = new MusicTheory();
+
+    private readonly exploratoryScalePool: ScaleName[] = [
+    'ritusen', 'pelog', 'hirajoshi', 'iwato', 'enigmatic', 'prometheus'
+  ];
+
+  private readonly allScalePool: ScaleName[] = [
+  'major', 'minor', 'dorian', 'phrygian', 'lydian', 'mixolydian',
+  'aeolian', 'locrian', 'pentatonic', 'blues', 'chromatic',
+  'wholetone', 'harmonic_minor', 'melodic_minor',
+  'ritusen', 'pelog', 'hirajoshi', 'iwato', 'enigmatic', 'prometheus'
+];
+
+
+  private readonly scaleTags: Record<ScaleName, { tags: string[]; categories: ScaleCategory[] }> = {
+    major: { tags: ['bright'], categories: ['light'] },
+    minor: { tags: ['melancholic'], categories: ['dark'] },
+    dorian: { tags: ['groovy'], categories: ['neutral'] },
+    phrygian: { tags: ['tense'], categories: ['dark'] },
+    lydian: { tags: ['floating'], categories: ['light'] },
+    mixolydian: { tags: ['open'], categories: ['neutral'] },
+    aeolian: { tags: ['sad'], categories: ['dark'] },
+    locrian: { tags: ['unstable'], categories: ['mystic'] },
+    pentatonic: { tags: ['simple'], categories: ['neutral'] },
+    blues: { tags: ['expressive'], categories: ['dark'] },
+    chromatic: { tags: ['dense'], categories: ['mystic'] },
+    wholetone: { tags: ['dreamy'], categories: ['mystic'] },
+    harmonic_minor: { tags: ['dramatic'], categories: ['dark'] },
+    melodic_minor: { tags: ['cinematic'], categories: ['neutral'] },
+    ritusen: { tags: ['serene', 'spacious', 'balanced', 'contemplative', 'airy'], categories: ['light', 'neutral'] },
+    pelog: { tags: ['mysterious', 'earthy', 'hypnotic', 'ancient', 'fluid'], categories: ['mystic', 'game'] },
+    hirajoshi: { tags: ['melancholic', 'delicate', 'introspective', 'nostalgic', 'fragile'], categories: ['dark', 'mystic'] },
+    iwato: { tags: ['tense', 'austere', 'primal', 'haunting', 'raw'], categories: ['dark', 'game'] },
+    enigmatic: { tags: ['unpredictable', 'alien', 'unstable', 'surreal', 'elusive'], categories: ['mystic', 'fantasy'] },
+    prometheus: { tags: ['heroic', 'luminous', 'dramatic', 'expansive', 'visionary'], categories: ['fantasy', 'light'] }
+  };
 
   // Note interval lookup for chord calculations
   private readonly notes = ['c', 'db', 'd', 'eb', 'e', 'f', 'gb', 'g', 'ab', 'a', 'bb', 'b'];
@@ -70,6 +118,59 @@ export class PatternGenerator {
     return steps.map(step => `${scale[(step % scale.length + scale.length) % scale.length]}${octave}`).join(' ');
   }
 
+    private pickUniformScale(requested?: ScaleName): ScaleName {
+    if (requested) return requested;
+    const i = Math.floor(Math.random() * this.exploratoryScalePool.length);
+    return this.exploratoryScalePool[i];
+  }
+
+  private getScaleMeta(scale: ScaleName): { tags: string[]; categories: ScaleCategory[] } {
+    return this.scaleTags[scale] || { tags: [], categories: [] };
+  }
+
+  private normalizeTag(tag: string): string {
+  return tag.toLowerCase().trim().replace(/[\s-]+/g, '_');
+}
+
+private resolveTagAlias(tag: string): string {
+  const aliases: Record<string, string> = {
+    darker: 'dark',
+    moody: 'dark',
+    sad: 'dark',
+    bright: 'light',
+    mystical: 'mystic'
+  };
+  return aliases[tag] || tag;
+}
+
+private pickUniform<T>(items: T[]): T {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+private pickScaleByRules(options: PatternOptions = {}): ScaleName {
+  if (options.scale) return options.scale;
+
+  const rawTags = options.tags ?? [];
+  const tags = rawTags
+    .map(t => this.resolveTagAlias(this.normalizeTag(t)))
+    .filter(Boolean);
+
+  if (tags.length === 0) {
+    return this.pickUniform(this.allScalePool);
+  }
+
+  const candidates = this.allScalePool.filter((scale) => {
+    const meta = this.scaleTags[scale];
+    const searchable = new Set(
+      [...meta.tags, ...meta.categories].map((t) =>
+        this.resolveTagAlias(this.normalizeTag(String(t)))
+      )
+    );
+    return tags.some((t) => searchable.has(t));
+  });
+
+  return this.pickUniform(candidates.length > 0 ? candidates : this.allScalePool);
+}
   private voicingFromIntervals(root: string, intervals: number[], octave: number): string {
     return intervals.map(interval => `${this.getInterval(root, interval)}${octave}`).join(' ');
   }
@@ -395,7 +496,12 @@ export class PatternGenerator {
    * @param bpm - Tempo in beats per minute (default: 120)
    * @returns Complete Strudel pattern with drums, bass, chords, and melody
    */
-  generateCompletePattern(style: string, key: string = 'C', bpm: number = 120): string {
+  generateCompletePattern(
+  style: string,
+  key: string = 'C',
+  bpm: number = 120,
+  options: PatternOptions = {}): string 
+  {
     // Handle aliases and special genres
     const styleMap: Record<string, string> = {
       'liquid_dnb': 'intelligent_dnb',
@@ -443,8 +549,12 @@ export class PatternGenerator {
     // Default generation for other styles
     const drums = this.generateDrumPattern(resolvedStyle, 0.7);
     const bass = this.generateBassline(key, resolvedStyle);
-    const scale = this.theory.generateScale(key, resolvedStyle === 'jazz' ? 'dorian' : 'minor');
-    const melody = this.generateMelody(scale);
+    const selectedScale: ScaleName = this.pickScaleByRules(options);
+    const scaleNotes = this.theory.generateScale(this.toTheoryRoot(key), selectedScale);
+    const melody = this.generateMelody(scaleNotes);
+    const scaleMeta = this.getScaleMeta(selectedScale);
+
+
     
     const chordStyle = resolvedStyle === 'jazz' ? 'jazz' : 
                       resolvedStyle === 'house' ? 'pop' : 
@@ -453,6 +563,7 @@ export class PatternGenerator {
     const chords = this.generateChords(progression, resolvedStyle === 'ambient' ? 'pad' : 'stab');
     
     return `// ${resolvedStyle} pattern in ${key} at ${bpm} BPM
+    // scale: ${selectedScale} | tags: ${scaleMeta.tags.join(', ')}
 setcpm(${bpm})
 
 stack(
