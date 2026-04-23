@@ -30,7 +30,13 @@ export class MusicTheory {
     rock: ['I', 'bVII', 'IV', 'I'],
     classical: ['I', 'IV', 'V', 'I'],
     modal: ['i', 'bVII', 'IV', 'i'],
-    edm: ['i', 'VI', 'III', 'VII']
+    edm: ['i', 'VI', 'III', 'VII'],
+    // Extended additions
+    jazz_extended: ['IIM9', 'V13', 'IM9'],
+    funk_extended: ['i9', 'bVII', 'VI', 'V13'],
+    modal_extended: ['i11', 'bVII', 'IV9', 'i9'],
+    neo_soul_extended: ['IM9', 'V13', 'vi11', 'IV9'],
+    cinematic_minor_extended: ['i9', 'VImaj9', 'IIImaj7', 'V13']
   };
 
 /**
