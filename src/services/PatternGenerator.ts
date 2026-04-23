@@ -17,11 +17,6 @@ type PatternOptions = {
 
 export class PatternGenerator {
   private theory = new MusicTheory();
-
-    private readonly exploratoryScalePool: ScaleName[] = [
-    'ritusen', 'pelog', 'hirajoshi', 'iwato', 'enigmatic', 'prometheus'
-  ];
-
   private readonly allScalePool: ScaleName[] = [
   'major', 'minor', 'dorian', 'phrygian', 'lydian', 'mixolydian',
   'aeolian', 'locrian', 'pentatonic', 'blues', 'chromatic',
@@ -29,6 +24,19 @@ export class PatternGenerator {
   'ritusen', 'pelog', 'hirajoshi', 'iwato', 'enigmatic', 'prometheus'
 ];
 
+  private readonly styleDefaultTags: Record<string, string[]> = {
+  brazilian_funk_ousadia: ['dark', 'melancholic'],
+  intelligent_dnb: ['mystic', 'airy', 'spacious'],
+  trip_hop: ['dark', 'earthy', 'hypnotic'],
+  boom_bap: ['dark', 'raw', 'dramatic']
+};
+
+private readonly styleScalePool: Record<string, ScaleName[]> = {
+  brazilian_funk_ousadia: ['minor', 'harmonic_minor', 'phrygian', 'dorian', 'hirajoshi', 'iwato'],
+  intelligent_dnb: ['dorian', 'melodic_minor', 'mixolydian', 'ritusen', 'prometheus', 'enigmatic'],
+  trip_hop: ['minor', 'phrygian', 'harmonic_minor', 'pelog', 'hirajoshi', 'iwato'],
+  boom_bap: ['minor', 'dorian', 'blues', 'pentatonic', 'harmonic_minor', 'phrygian']
+};
 
   private readonly scaleTags: Record<ScaleName, { tags: string[]; categories: ScaleCategory[] }> = {
     major: { tags: ['bright'], categories: ['light'] },
@@ -93,6 +101,14 @@ export class PatternGenerator {
     return (flatToSharp[normalized] || normalized).toUpperCase();
   }
 
+  private getScaleNotesForKey(root: string, scale: ScaleName): string[] {
+  try {
+    return this.theory.generateScale(this.toTheoryRoot(root), scale).map(n => n.toLowerCase());
+  } catch {
+    return this.theory.generateScale(this.toTheoryRoot(root), 'minor').map(n => n.toLowerCase());
+  }
+}
+
   private buildScaleForMode(root: string, mode: FunkMode): string[] {
     const theoryMap: Record<FunkMode, 'major' | 'minor' | 'dorian' | 'mixolydian' | 'harmonic_minor' | 'melodic_minor'> = {
       major: 'major',
@@ -118,12 +134,6 @@ export class PatternGenerator {
     return steps.map(step => `${scale[(step % scale.length + scale.length) % scale.length]}${octave}`).join(' ');
   }
 
-    private pickUniformScale(requested?: ScaleName): ScaleName {
-    if (requested) return requested;
-    const i = Math.floor(Math.random() * this.exploratoryScalePool.length);
-    return this.exploratoryScalePool[i];
-  }
-
   private getScaleMeta(scale: ScaleName): { tags: string[]; categories: ScaleCategory[] } {
     return this.scaleTags[scale] || { tags: [], categories: [] };
   }
@@ -137,8 +147,18 @@ private resolveTagAlias(tag: string): string {
     darker: 'dark',
     moody: 'dark',
     sad: 'dark',
+    tense: 'dark',
+    haunting: 'dark',
+
     bright: 'light',
-    mystical: 'mystic'
+    airy: 'light',
+    luminous: 'light',
+
+    mystical: 'mystic',
+    mysterious: 'mystic',
+    surreal: 'mystic',
+
+    gamey: 'game'
   };
   return aliases[tag] || tag;
 }
@@ -147,30 +167,27 @@ private pickUniform<T>(items: T[]): T {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-private pickScaleByRules(options: PatternOptions = {}): ScaleName {
+  private pickScaleForStyle(style: string, options: PatternOptions = {}): ScaleName {
   if (options.scale) return options.scale;
 
-  const rawTags = options.tags ?? [];
-  const tags = rawTags
-    .map(t => this.resolveTagAlias(this.normalizeTag(t)))
-    .filter(Boolean);
+  const basePool = this.styleScalePool[style] ?? this.allScalePool;
+  const inputTags = (options.tags ?? []).map(t => this.resolveTagAlias(this.normalizeTag(t)));
+  const defaultTags = (this.styleDefaultTags[style] ?? []).map(t => this.resolveTagAlias(this.normalizeTag(t)));
+  const effectiveTags = inputTags.length > 0 ? inputTags : defaultTags;
 
-  if (tags.length === 0) {
-    return this.pickUniform(this.allScalePool);
-  }
+  if (effectiveTags.length === 0) return this.pickUniform(basePool);
 
-  const candidates = this.allScalePool.filter((scale) => {
+  const candidates = basePool.filter((scale) => {
     const meta = this.scaleTags[scale];
     const searchable = new Set(
-      [...meta.tags, ...meta.categories].map((t) =>
-        this.resolveTagAlias(this.normalizeTag(String(t)))
-      )
+      [...meta.tags, ...meta.categories].map(t => this.resolveTagAlias(this.normalizeTag(String(t))))
     );
-    return tags.some((t) => searchable.has(t));
+    return effectiveTags.some(t => searchable.has(t));
   });
 
-  return this.pickUniform(candidates.length > 0 ? candidates : this.allScalePool);
+  return this.pickUniform(candidates.length > 0 ? candidates : basePool);
 }
+
   private voicingFromIntervals(root: string, intervals: number[], octave: number): string {
     return intervals.map(interval => `${this.getInterval(root, interval)}${octave}`).join(' ');
   }
@@ -343,8 +360,27 @@ private pickScaleByRules(options: PatternOptions = {}): ScaleName {
     ? String(options.mood || 'groove')
     : 'groove';
 
-  const pattern = this.generateBrazilianFunkOusadia(key, safeTempo);
-  const result: { pattern: string; metadata?: Record<string, unknown>; layers?: Record<string, string> } = { pattern };
+  const rawScale = typeof options.scale === 'string' ? options.scale : undefined;
+  const safeScale = rawScale && this.allScalePool.includes(rawScale as ScaleName)
+  ? (rawScale as ScaleName)
+  : undefined;
+
+  const rawTags = Array.isArray(options.tags) ? options.tags.map(String) : undefined;
+
+  const selectedScale = this.pickScaleForStyle('brazilian_funk_ousadia', {
+  scale: safeScale,
+  tags: rawTags
+});
+
+const scaleMeta = this.getScaleMeta(selectedScale);
+const selectedMode: FunkMode | 'custom' = (
+  ['major', 'minor', 'dorian', 'mixolydian', 'harmonic_minor', 'melodic_minor'] as const
+).includes(selectedScale as any)
+  ? (selectedScale as FunkMode)
+  : 'custom';
+
+const pattern = this.generateBrazilianFunkOusadia(key, safeTempo, selectedScale);
+const result: { pattern: string; metadata?: Record<string, unknown>; layers?: Record<string, string> } = { pattern };
 
   if (options.includeMetadata !== false) {
     result.metadata = {
@@ -353,7 +389,10 @@ private pickScaleByRules(options: PatternOptions = {}): ScaleName {
       tempo: safeTempo,
       density: safeDensity,
       mood: safeMood,
-      mode: 'minor'
+      mode: selectedMode,
+      scale: selectedScale,
+      scaleTags: scaleMeta.tags,
+      scaleCategories: scaleMeta.categories
     };
   }
 
@@ -444,6 +483,7 @@ private pickScaleByRules(options: PatternOptions = {}): ScaleName {
    * @returns Strudel melody pattern code
    */
   generateMelody(scale: string[], length: number = 8, octaveRange: [number, number] = [3, 5]): string {
+    if (!scale.length) return `note("c4").s("triangle")`;
     const notes = [];
     let lastNoteIndex = Math.floor(Math.random() * scale.length);
     
@@ -528,29 +568,34 @@ private pickScaleByRules(options: PatternOptions = {}): ScaleName {
     };
 
     const resolvedStyle = styleMap[style.toLowerCase()] || style.toLowerCase();
+    const selectedScale: ScaleName = this.pickScaleForStyle(resolvedStyle, options);
+
 
     
 
   // Use specialized generators for new genres
      switch (resolvedStyle) {
-      case 'intelligent_dnb':
-        return this.generateIntelligentDnB(key, bpm || 170);
-      case 'trip_hop':
-        return this.generateTripHop(key, bpm || 90);
-      case 'boom_bap':
-        return this.generateBoomBap(key, bpm || 92);
-      case 'brazilian_funk_ousadia': {
-    const funkRoot = key.replace(/m$/i, '') || 'C';
-    const funkBpm = bpm === 120 ? 130 : bpm;
-    return this.generateBrazilianFunkOusadia(funkRoot, funkBpm);
+       case 'intelligent_dnb':
+       return this.generateIntelligentDnB(key, bpm || 170, selectedScale);
+
+       case 'trip_hop':
+       return this.generateTripHop(key, bpm || 90, selectedScale);
+
+       case 'boom_bap':
+       return this.generateBoomBap(key, bpm || 92, selectedScale);
+
+       case 'brazilian_funk_ousadia': {
+       const funkRoot = key.replace(/m$/i, '') || 'C';
+       const funkBpm = bpm === 120 ? 130 : bpm;
+       return this.generateBrazilianFunkOusadia(funkRoot, funkBpm, selectedScale);
   }
 }
+
 
     // Default generation for other styles
     const drums = this.generateDrumPattern(resolvedStyle, 0.7);
     const bass = this.generateBassline(key, resolvedStyle);
-    const selectedScale: ScaleName = this.pickScaleByRules(options);
-    const scaleNotes = this.theory.generateScale(this.toTheoryRoot(key), selectedScale);
+    const scaleNotes = this.getScaleNotesForKey(key, selectedScale);
     const melody = this.generateMelody(scaleNotes);
     const scaleMeta = this.getScaleMeta(selectedScale);
 
@@ -585,11 +630,14 @@ stack(
   // INTELLIGENT DNB GENERATOR
   // Style: LTJ Bukem, Good Looking Records
   // ========================================
-  private generateIntelligentDnB(key: string, tempo: number): string {
+   private generateIntelligentDnB(key: string, tempo: number, scale: ScaleName): string {
     const safeKey = key.toLowerCase();
     const fourth = this.getFourth(safeKey);
     const seventh = this.getMinorSeventh(safeKey);
     const third = this.getMinorThird(safeKey);
+    const scaleNotes = this.getScaleNotesForKey(safeKey, scale);
+    const scaleLead = this.buildScalePattern(scaleNotes, [0, 2, 4, 2, 1, 0, 3, 1], 5);
+
     
     return `// Intelligent DnB in ${key} at ${tempo} BPM
 // Style: LTJ Bukem / Good Looking Records
@@ -666,11 +714,14 @@ stack(
   // TRIP HOP GENERATOR
   // Style: Portishead, Massive Attack, Flying Lotus
   // ========================================
-  private generateTripHop(key: string, tempo: number): string {
+  private generateTripHop(key: string, tempo: number, scale: ScaleName): string {
     const safeKey = key.toLowerCase();
     const fourth = this.getFourth(safeKey);
     const fifth = this.getFifth(safeKey);
     const seventh = this.getMinorSeventh(safeKey);
+    const scaleNotes = this.getScaleNotesForKey(safeKey, scale);
+    const scaleLead = this.buildScalePattern(scaleNotes, [0, 2, 4, 2, 1, 0, 3, 1], 5);
+
     
     return `// Trip Hop in ${key} at ${tempo} BPM
 // Style: Portishead / Massive Attack
@@ -754,13 +805,15 @@ stack(
   // BOOM BAP GENERATOR
   // Style: DJ Premier, Alchemist, Daringer, Hit-Boy
   // ========================================
-  private generateBoomBap(key: string, tempo: number): string {
+  private generateBoomBap(key: string, tempo: number, scale: ScaleName): string {
     const safeKey = key.toLowerCase();
     const fourth = this.getFourth(safeKey);
     const fifth = this.getFifth(safeKey);
     const seventh = this.getMinorSeventh(safeKey);
     const minorThird = this.getMinorThird(safeKey);
-    
+    const scaleNotes = this.getScaleNotesForKey(safeKey, scale);
+    const scaleLead = this.buildScalePattern(scaleNotes, [0, 2, 4, 2, 1, 0, 3, 1], 5);
+
     return `// Boom Bap in ${key} at ${tempo} BPM
 // Style: DJ Premier / Alchemist / Daringer
 setcps(${tempo}/60/2)
@@ -839,12 +892,18 @@ stack(
   // BRAZILIAN FUNK OUSADIA GENERATOR
   // Style: Funk SP / Baile Ousadia
   // ========================================
-  private generateBrazilianFunkOusadia(key: string, tempo: number): string {
+  private generateBrazilianFunkOusadia(key: string, tempo: number, scale: ScaleName): string {
     const safeKey = this.normalizeRoot(key);
     const safeTempo = Math.max(120, Math.min(150, Math.round(tempo)));
-    const fourth = this.getFourth(safeKey);
-    const fifth = this.getFifth(safeKey);
-    const seventh = this.getMinorSeventh(safeKey);
+    const scaleNotes = this.getScaleNotesForKey(safeKey, scale);
+    const at = (i: number) => scaleNotes[((i % scaleNotes.length) + scaleNotes.length) % scaleNotes.length] ?? safeKey;
+    const n0 = at(0);
+    const n1 = at(1);
+    const n2 = at(2);
+    const n3 = at(3);
+    const n4 = at(4);
+    const n6 = at(6); // wraps automatically on shorter scales
+    const scaleLead = this.buildScalePattern(scaleNotes, [0, 2, 4, 2, 1, 0, 3, 1], 5);
 
     return `// Brazilian Funk Ousadia in ${safeKey.toUpperCase()} at ${safeTempo} BPM
 // Style: Funk Carioca / Baile Funk
@@ -852,7 +911,7 @@ samples('github:tidalcycles/dirt-samples')
 setcpm(${safeTempo}/4/2)
 
 let intro = stack(
-  note("[${fifth}4 ${safeKey}5] [${fifth}4 ${safeKey}5] [${fourth}4 ${safeKey}5] [${safeKey}4 ${safeKey}5] [${seventh}4 ${safeKey}5] [${fourth}4 ${safeKey}5] [${safeKey}4 ${safeKey}5] [${fourth}4 ${safeKey}5]")
+  note("[${n2}4 ${n0}5] [${n2}4 ${n0}5] [${n1}4 ${n0}5] [${n3}4 ${n0}5] [${n4}4 ${n0}5] [${n1}4 ${n0}5] [${n6}4 ${n0}5] [${n3}4 ${n0}5]")
     .s("gm_glockenspiel:0")
     .room(3)
     .sz(3)
