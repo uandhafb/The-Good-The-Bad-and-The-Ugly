@@ -20,7 +20,9 @@ export class InputValidator {
 
   // Valid chord progression styles from MusicTheory service
   private static readonly VALID_CHORD_STYLES = [
-    'pop', 'jazz', 'blues', 'folk', 'rock', 'classical', 'modal', 'edm'
+    'pop', 'jazz', 'blues', 'folk', 'rock', 'classical', 'modal', 'edm',
+    'jazz_extended', 'funk_extended', 'modal_extended', 'neo_soul_extended',
+    'cinematic_minor_extended', 'brazilian_funk_ousadia', 'brazilian_funk_ambient'
   ];
 
   // Valid root notes (12-tone chromatic scale)
@@ -176,7 +178,9 @@ export class InputValidator {
    * @param style - Chord style (must be lowercase)
    * @throws {Error} When chord style is invalid or not a string
    *
-   * Supported styles: pop, jazz, blues, folk, rock, classical, modal, edm
+   * Supported styles: pop, jazz, blues, folk, rock, classical, modal, edm,
+   * jazz_extended, funk_extended, modal_extended, neo_soul_extended,
+   * cinematic_minor_extended, brazilian_funk_ousadia, brazilian_funk_ambient
    *
    * @example
    * InputValidator.validateChordStyle('jazz');   // ✓ Valid

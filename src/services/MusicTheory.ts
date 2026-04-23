@@ -36,7 +36,10 @@ export class MusicTheory {
     funk_extended: ['i9', 'bVII', 'VI', 'V13'],
     modal_extended: ['i11', 'bVII', 'IV9', 'i9'],
     neo_soul_extended: ['IM9', 'V13', 'vi11', 'IV9'],
-    cinematic_minor_extended: ['i9', 'VImaj9', 'IIImaj7', 'V13']
+    cinematic_minor_extended: ['i9', 'VImaj9', 'IIImaj7', 'V13'],
+   // Brazilian funk often uses minor keys with extended chords and modal interchange.
+    brazilian_funk_ousadia: ['i9', 'bVII', 'VI', 'V13'],
+    brazilian_funk_ambient: ['i11', 'bVII', 'IV9', 'i9']
   };
 
 /**
@@ -57,6 +60,15 @@ export class MusicTheory {
     };
     return enharmonicMap[normalized] || normalized;
   }
+
+  private normalizeKeyRoot(key: string): string {
+  const parsed = key.trim().match(/^([A-Ga-g])([#b♯♭]?)/);
+  if (!parsed) {
+    throw new Error(`Invalid key: ${key}`);
+  }
+  return this.normalizeNote(`${parsed[1].toUpperCase()}${parsed[2] || ''}`);
+}
+
 
   /**
    * Generates a musical scale from a root note
@@ -91,57 +103,65 @@ export class MusicTheory {
    * @returns Space-separated string of chord names
    * @throws {Error} When style is invalid
    */
+
   generateChordProgression(key: string, style: keyof typeof this.chordProgressions): string {
-    const progression = this.chordProgressions[style];
-    if (!progression) {
-      throw new Error(`Invalid progression style: ${style}`);
-    }
-    
-    const chordMap: Record<string, string> = {
-       'I': key,
-       'I7': `${key}7`,
-       'IM7': `${key}maj7`,
-       'IM9': `${key}maj9`,
-       'IM11': `${key}maj11`,
-       'IM13': `${key}maj13`,
-
-      'i': `${key.toLowerCase()}m`,
-      'i7': `${key.toLowerCase()}m7`,
-      'i9': `${key.toLowerCase()}m9`,
-      'i11': `${key.toLowerCase()}m11`,
-      'i13': `${key.toLowerCase()}m13`,
-
-      'ii': `${this.getNote(key, 2)}m`,
-      'IIM7': `${this.getNote(key, 2)}m7`,
-      'IIM9': `${this.getNote(key, 2)}m9`,
-      'IIM11': `${this.getNote(key, 2)}m11`,
-
-      'iii': `${this.getNote(key, 4)}m`,
-      'III': this.getNote(key, 4),
-
-      'IV': this.getNote(key, 5),
-      'IV7': `${this.getNote(key, 5)}7`,
-      'IV9': `${this.getNote(key, 5)}9`,
-      'IV11': `${this.getNote(key, 5)}11`,
-
-      'V': this.getNote(key, 7),
-      'V7': `${this.getNote(key, 7)}7`,
-      'V9': `${this.getNote(key, 7)}9`,
-      'V11': `${this.getNote(key, 7)}11`,
-      'V13': `${this.getNote(key, 7)}13`,
-
-      'vi': `${this.getNote(key, 9)}m`,
-      'VI': this.getNote(key, 9),
-
-      'VII': this.getNote(key, 11),
-      'bVII': this.getNote(key, 10)
-      
-    };
-
-    return progression
-      .map(chord => chordMap[chord] || key)
-      .join(' ');
+  const progression = this.chordProgressions[style];
+  if (!progression) {
+    throw new Error(`Invalid progression style: ${style}`);
   }
+
+  const root = this.normalizeKeyRoot(key);
+
+  const chordMap: Record<string, string> = {
+    'I': root,
+    'I7': `${root}7`,
+    'IM7': `${root}maj7`,
+    'IM9': `${root}maj9`,
+    'IM11': `${root}maj11`,
+    'IM13': `${root}maj13`,
+
+    'i': `${root.toLowerCase()}m`,
+    'i7': `${root.toLowerCase()}m7`,
+    'i9': `${root.toLowerCase()}m9`,
+    'i11': `${root.toLowerCase()}m11`,
+    'i13': `${root.toLowerCase()}m13`,
+
+    'ii': `${this.getNote(root, 2)}m`,
+    'IIM7': `${this.getNote(root, 2)}m7`,
+    'IIM9': `${this.getNote(root, 2)}m9`,
+    'IIM11': `${this.getNote(root, 2)}m11`,
+
+    'iii': `${this.getNote(root, 4)}m`,
+    'III': this.getNote(root, 4),
+    'IIImaj7': `${this.getNote(root, 4)}maj7`,
+    'IIImaj9': `${this.getNote(root, 4)}maj9`,
+
+    'IV': this.getNote(root, 5),
+    'IV7': `${this.getNote(root, 5)}7`,
+    'IV9': `${this.getNote(root, 5)}9`,
+    'IV11': `${this.getNote(root, 5)}11`,
+
+    'V': this.getNote(root, 7),
+    'V7': `${this.getNote(root, 7)}7`,
+    'V9': `${this.getNote(root, 7)}9`,
+    'V11': `${this.getNote(root, 7)}11`,
+    'V13': `${this.getNote(root, 7)}13`,
+    'v': `${this.getNote(root, 7)}m`,
+
+    'vi': `${this.getNote(root, 9)}m`,
+    'vi11': `${this.getNote(root, 9)}m11`,
+    'VI': this.getNote(root, 9),
+    'VImaj7': `${this.getNote(root, 9)}maj7`,
+    'VImaj9': `${this.getNote(root, 9)}maj9`,
+
+    'VII': this.getNote(root, 11),
+    'bVII': this.getNote(root, 10),
+    'bIII': this.getNote(root, 3),
+    'bVI': this.getNote(root, 8)
+  };
+
+  return progression.map(chord => chordMap[chord] || root).join(' ');
+}
 
   /**
    * Calculates a note at a given interval from the root
@@ -157,7 +177,6 @@ export class MusicTheory {
     return noteNames[(rootIndex + semitones) % 12];
   }
   
-
   /**
    * Generates a Euclidean rhythm pattern
    * @param hits - Number of hits/beats in the pattern
@@ -165,22 +184,39 @@ export class MusicTheory {
    * @returns Space-separated string of '1' (hit) and '~' (rest)
    * @throws {Error} When hits exceed steps
    */
+
   generateEuclideanRhythm(hits: number, steps: number): string {
-    if (hits > steps) {
-      throw new Error('Hits cannot exceed steps');
-    }
-    
-    const pattern: boolean[] = new Array(steps).fill(false);
-    const interval = steps / hits;
-    
-    for (let i = 0; i < hits; i++) {
-      const index = Math.floor(i * interval);
-      pattern[index] = true;
-    }
-    
-    return pattern.map(hit => hit ? '1' : '~').join(' ');
+  if (!Number.isInteger(hits) || !Number.isInteger(steps)) {
+    throw new Error('Hits and steps must be integers');
   }
 
+  if (hits < 0) {
+    throw new Error('Hits cannot be negative');
+  }
+
+  if (steps <= 0) {
+    throw new Error('Steps must be greater than 0');
+  }
+
+  if (hits > steps) {
+    throw new Error('Hits cannot exceed steps');
+  }
+
+  // Explicit zero-hits behavior: valid pattern with only rests
+  if (hits === 0) {
+    return new Array(steps).fill('~').join(' ');
+  }
+
+  const pattern: boolean[] = new Array(steps).fill(false);
+  const interval = steps / hits;
+
+  for (let i = 0; i < hits; i++) {
+    const index = Math.floor(i * interval);
+    pattern[index] = true;
+  }
+
+  return pattern.map(hit => (hit ? '1' : '~')).join(' ');
+}
   /**
    * Generates a polyrhythm from two Euclidean patterns
    * @param pattern1 - Number of hits for first rhythm

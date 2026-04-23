@@ -248,7 +248,11 @@ describe('EnhancedMCPServerFixed - Parameter Validation', () => {
       });
 
       test('should accept all valid chord styles', () => {
-        const validStyles = ['pop', 'jazz', 'blues', 'folk', 'rock', 'classical', 'modal', 'edm'];
+        const validStyles = [
+          'pop', 'jazz', 'blues', 'folk', 'rock', 'classical', 'modal', 'edm',
+          'jazz_extended', 'funk_extended', 'modal_extended', 'neo_soul_extended',
+          'cinematic_minor_extended', 'brazilian_funk_ousadia', 'brazilian_funk_ambient'
+        ];
         validStyles.forEach(style => {
           expect(() => InputValidator.validateChordStyle(style)).not.toThrow();
         });

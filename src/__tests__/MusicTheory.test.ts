@@ -99,6 +99,25 @@ describe('MusicTheory', () => {
       expect(progression.split(' ')).toHaveLength(12); // 12-bar blues
     });
 
+    test('should generate extended progression styles with mapped chord symbols', () => {
+      expect(theory.generateChordProgression('C', 'jazz_extended' as any)).toBe('Dm9 G13 Cmaj9');
+      expect(theory.generateChordProgression('C', 'funk_extended' as any)).toBe('cm9 A# A G13');
+      expect(theory.generateChordProgression('C', 'modal_extended' as any)).toBe('cm11 A# F9 cm9');
+      expect(theory.generateChordProgression('C', 'neo_soul_extended' as any)).toBe('Cmaj9 G13 Am11 F9');
+      expect(theory.generateChordProgression('C', 'cinematic_minor_extended' as any)).toBe('cm9 Amaj9 Emaj7 G13');
+    });
+
+    test('should generate brazilian funk progression styles', () => {
+      expect(theory.generateChordProgression('C', 'brazilian_funk_ousadia' as any)).toBe('cm9 A# A G13');
+      expect(theory.generateChordProgression('C', 'brazilian_funk_ambient' as any)).toBe('cm11 A# F9 cm9');
+    });
+
+    test('should normalize minor key names before progression mapping', () => {
+      const progression = theory.generateChordProgression('Am', 'jazz_extended' as any);
+      expect(progression).toBe('Bm9 E13 Amaj9');
+      expect(progression).not.toContain('amm');
+    });
+
     test('should handle different keys', () => {
       const progressionC = theory.generateChordProgression('C', 'pop');
       const progressionG = theory.generateChordProgression('G', 'pop');
@@ -106,7 +125,11 @@ describe('MusicTheory', () => {
     });
 
     test('should generate all progression types', () => {
-      const styles = ['pop', 'jazz', 'blues', 'folk', 'rock', 'classical', 'modal', 'edm'];
+      const styles = [
+        'pop', 'jazz', 'blues', 'folk', 'rock', 'classical', 'modal', 'edm',
+        'jazz_extended', 'funk_extended', 'modal_extended', 'neo_soul_extended',
+        'cinematic_minor_extended', 'brazilian_funk_ousadia', 'brazilian_funk_ambient'
+      ];
       styles.forEach(style => {
         const progression = theory.generateChordProgression('C', style as any);
         expect(progression).toBeTruthy();

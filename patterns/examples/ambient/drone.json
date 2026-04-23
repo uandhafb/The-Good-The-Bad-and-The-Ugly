@@ -1,7 +1,7 @@
 {
   "name": "drone",
   "genre": "ambient",
-  "pattern": "// ambient pattern in G at 60 BPM\nsetcpm(60)\n\nstack(\n  // Drums\n  s(\"bd ~ ~ ~, ~ ~ ~ hh:8, ~ ~ oh:5 ~\").room(0.9).gain(0.5),\n  \n  // Bass\n  note(\"G1\").s(\"sine\").attack(2).release(4).gain(0.6),\n  \n  // Chords\n  note(\"<G D Em C>\").s(\"sawtooth\").attack(2).release(4).room(0.8).gain(0.6),\n  \n  // Melody\n  note(\"c4 d4 f5 g3 a5 a#3 f4 d#3\").s(\"triangle\").struct(\"~ 1 ~ 1 1 ~ 1 ~\").delay(0.25).room(0.3).gain(0.5)\n).gain(0.8)",
+  "pattern": "// ambient pattern in G at 60 BPM\nsetcpm(60)\n\nstack(\n  // Drums\n  s(\"bd ~ ~ ~, ~ ~ ~ hh:8, ~ ~ oh:5 ~\").room(0.9).gain(0.5),\n  \n  // Bass\n  note(\"G1\").s(\"sine\").attack(2).release(4).gain(0.6),\n  \n  // Chords\n  note(\"<G D Em C>\").s(\"sawtooth\").attack(2).release(4).room(0.8).gain(0.6),\n  \n  // Melody\n  note(\"g3 g5 a#4 a4 a#4 c4 d4 c4\").s(\"triangle\").struct(\"~ 1 ~ 1 1 ~ 1 ~\").delay(0.25).room(0.3).gain(0.5)\n).gain(0.8)",
   "bpm": 60,
   "key": "G",
   "description": "Minimalist drone ambient",
@@ -9,5 +9,5 @@
     "ambient",
     "drone"
   ],
-  "timestamp": "2026-03-22T21:34:19.765Z"
+  "timestamp": "2026-04-23T15:36:45.666Z"
 }

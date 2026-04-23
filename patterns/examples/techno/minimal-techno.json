@@ -1,7 +1,7 @@
 {
   "name": "minimal-techno",
   "genre": "techno",
-  "pattern": "// techno pattern in E at 128 BPM\nsetcpm(128)\n\nstack(\n  // Drums\n  s(\"bd*4, ~ cp ~ cp, hh*8\"),\n  \n  // Bass\n  note(\"E2 E2 E2 E2\").s(\"sawtooth\").cutoff(800),\n  \n  // Chords\n  note(\"<em C# G# D#>\").s(\"sawtooth\").struct(\"1 ~ 1 ~\").release(0.1).gain(0.6),\n  \n  // Melody\n  note(\"a5 b5 a3 b5 a5 b3 c4 g3\").s(\"triangle\").struct(\"~ 1 ~ 1 1 ~ 1 ~\").delay(0.25).room(0.3).gain(0.5)\n).gain(0.8)",
+  "pattern": "// techno pattern in E at 128 BPM\nsetcpm(128)\n\nstack(\n  // Drums\n  s(\"bd*4, ~ cp ~ cp, hh*8\"),\n  \n  // Bass\n  note(\"E2 E2 E2 E2\").s(\"sawtooth\").cutoff(800),\n  \n  // Chords\n  note(\"<em C# G# D#>\").s(\"sawtooth\").struct(\"1 ~ 1 ~\").release(0.1).gain(0.6),\n  \n  // Melody\n  note(\"c5 b5 a3 g3 f#5 g3 a5 g4\").s(\"triangle\").struct(\"~ 1 ~ 1 1 ~ 1 ~\").delay(0.25).room(0.3).gain(0.5)\n).gain(0.8)",
   "bpm": 128,
   "key": "E",
   "description": "Minimal techno with subtle groove",
@@ -9,5 +9,5 @@
     "techno",
     "minimal techno"
   ],
-  "timestamp": "2026-03-22T21:34:19.750Z"
+  "timestamp": "2026-04-23T15:36:45.662Z"
 }
