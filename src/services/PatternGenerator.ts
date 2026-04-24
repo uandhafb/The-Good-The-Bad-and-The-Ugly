@@ -62,19 +62,31 @@ private readonly styleScalePool: Record<string, ScaleName[]> = {
   };
 
   private readonly texturaComEscalas: Partial<Record<ScaleName, string[]>> = {
-    enigmatic: [
-      `$: s("industrial*16").gain(0.3).degradeBy(0).decay(0.5).n(irand(13)).scale("C:enigmatic").room(1).roomsize(3).pan(sine.slow(7))`,
-      `$: n("0 2 4 6 7 9 5").scale("C:enigmatic").jux(rev).gain(2).room(1).roomsize(3)`
-    ],
-    iwato: [
-      `let mouth2 = n("[15 14 13 <12 11 10> 9 8 7]*3 | [1 3 4 2 5 6]?0.2")
-  .scale("C:iwato")
-  .s("industrial:3")
-  .room(2)
-  .every(9, x => x.hurry(3).pan("<.5 1 .5 0>"))
-  .every(5, x => x.slow(5).ply("<2 7 3>").gain(0.3))`
-    ]
-  };
+  enigmatic: [
+    `$: s("industrial*16").gain(0.3).degradeBy(0).decay(0.5).n(irand(13)).scale("C:enigmatic").room(1).roomsize(3).pan(sine.slow(7))`,
+    `$: n("0 2 4 6 7 9 5").scale("C:enigmatic").jux(rev).gain(2).room(1).roomsize(3)`
+  ],
+  iwato: [
+    `let mouth2 = n("[15 14 13 <12 11 10> 9 8 7]*3 | [1 3 4 2 5 6]?0.2")
+     .scale("C:iwato")
+     .s("industrial:3")
+     .room(2)
+     .every(9, x => x.hurry(3).pan("<.5 1 .5 0>"))
+     .every(5, x => x.slow(5).ply("<2 7 3>").gain(0.3))
+     $: mouth2`
+  ],
+  pelog: [
+    `$: n("1 .. 17").scale("<C3:pelog!6 B2:ritusen!2>").every(2, rev()).slow(1).delayt(0.1).delayfb(0.05).delay(0.25)`
+  ],
+  ritusen: [
+    `$: n("0 .. 11").scale("<C2:ritusen C3:iwato G2:hirajoshi>").delayt(0.33).delayfb(0.05).delay(0.5)`,
+    `$: n("1 .. 17").scale("<C3:pelog!6 B2:ritusen!2>").every(2, rev()).slow(1).delayt(0.1).delayfb(0.05).delay(0.25)`
+  ],
+  hirajoshi: [
+    `$: n("0 .. 11").scale("<C2:ritusen C3:iwato G2:hirajoshi>").delayt(0.33).delayfb(0.05).delay(0.5)`
+  ]
+};
+
 
   // Note interval lookup for chord calculations
   private readonly notes = ['c', 'db', 'd', 'eb', 'e', 'f', 'gb', 'g', 'ab', 'a', 'bb', 'b'];
@@ -351,7 +363,7 @@ private pickUniform<T>(items: T[]): T {
       'alchemist': 'boom_bap',
       'daringer': 'boom_bap',
       'hitboy': 'boom_bap',
-      'brazilian_funk': 'brazilian_funk_ousadia',
+      'brazilian funk': 'brazilian_funk_ousadia',
       'funk ousadia': 'brazilian_funk_ousadia',
       'brazilian funk ousadia': 'brazilian_funk_ousadia',
       'ousadia_brazilian_funk': 'brazilian_funk_ousadia',
@@ -579,7 +591,21 @@ const result: { pattern: string; metadata?: Record<string, unknown>; layers?: Re
       'funk ousadia': 'brazilian_funk_ousadia',
       'brazilian funk ousadia': 'brazilian_funk_ousadia',
       'ousadia_brazilian_funk': 'brazilian_funk_ousadia',
-      'minimalist_brazilian_funk': 'brazilian_funk_ousadia'
+      'minimalist_brazilian_funk': 'brazilian_funk_ousadia',
+      'ritimada': 'vibe_ritimada',
+      'vibe ritimada': 'vibe_ritimada',
+      'chao pisante': 'chao_pisante',
+      'chao_pisante': 'chao_pisante',
+      'pisante': 'chao_pisante',
+      'bruxaria vibe': 'bruxaria-vibe',
+      'bruxaria introducao': 'bruxaria-vibe',
+      'bruxaria': 'bruxaria-vibe',
+      'textura com escalas': 'textura_com_escalas',
+      'textura_com_escalas': 'textura_com_escalas',
+      'textura escalas': 'textura_com_escalas',
+
+
+
     };
 
     const resolvedStyle = styleMap[style.toLowerCase()] || style.toLowerCase();
@@ -599,10 +625,23 @@ const result: { pattern: string; metadata?: Record<string, unknown>; layers?: Re
        case 'boom_bap':
        return this.generateBoomBap(key, bpm || 92, selectedScale);
 
+       case 'vibe_ritimada':
+       return this.generateVibeRitimada(bpm || 120/4);
+
+       case 'chao_pisante':
+       return this.generateChaoPisante(bpm || 120/4);
+
+       case 'bruxaria-vibe':
+       return this.generateBruxariaVibe(bpm || 120/4);
+
+       case 'textura_com_escalas':
+       return this.generateTexturaComEscalas(selectedScale, key, 0);
+
        case 'brazilian_funk_ousadia': {
        const funkRoot = key.replace(/m$/i, '') || 'C';
        const funkBpm = bpm === 120 ? 130 : bpm;
        return this.generateBrazilianFunkOusadia(funkRoot, funkBpm, selectedScale);
+
   }
 }
 
@@ -642,26 +681,27 @@ stack(
   }
 
   generateTexturaComEscalas(scale?: ScaleName, key: string = 'C', index: number = 0): string {
-    const availableScales = (Object.keys(this.texturaComEscalas) as ScaleName[])
-      .filter((s) => (this.texturaComEscalas[s]?.length ?? 0) > 0);
+  const availableScales = (Object.keys(this.texturaComEscalas) as ScaleName[])
+    .filter((s) => (this.texturaComEscalas[s]?.length ?? 0) > 0);
 
-    if (availableScales.length === 0) {
-      return '// No textura com escalas examples configured';
-    }
-
-    const chosenScale =
-      scale && (this.texturaComEscalas[scale]?.length ?? 0) > 0
-        ? scale
-        : this.pickUniform(availableScales);
-
-    const examples = this.texturaComEscalas[chosenScale]!;
-    const safeIndex = ((index % examples.length) + examples.length) % examples.length;
-
-    return examples[safeIndex].replaceAll(
-      `C:${chosenScale}`,
-      `${this.toTheoryRoot(key)}:${chosenScale}`
-    );
+  if (availableScales.length === 0) {
+    return '// No textura com escalas examples configured';
   }
+
+  const chosenScale =
+    scale && (this.texturaComEscalas[scale]?.length ?? 0) > 0
+      ? scale
+      : this.pickUniform(availableScales);
+
+  const examples = this.texturaComEscalas[chosenScale]!;
+  const safeIndex = ((index % examples.length) + examples.length) % examples.length;
+
+  return examples[safeIndex].replaceAll(
+    `C:${chosenScale}`,
+    `${this.toTheoryRoot(key)}:${chosenScale}`
+  );
+}
+
 
   // ========================================
   // INTELLIGENT DNB GENERATOR
@@ -673,7 +713,7 @@ stack(
     const seventh = this.getMinorSeventh(safeKey);
     const third = this.getMinorThird(safeKey);
     const scaleNotes = this.getScaleNotesForKey(safeKey, scale);
-    const scaleLead = this.buildScalePattern(scaleNotes, [0, 2, 4, 2, 1, 0, 3, 1], 5);
+    
 
     
     return `// Intelligent DnB in ${key} at ${tempo} BPM
@@ -757,7 +797,7 @@ stack(
     const fifth = this.getFifth(safeKey);
     const seventh = this.getMinorSeventh(safeKey);
     const scaleNotes = this.getScaleNotesForKey(safeKey, scale);
-    const scaleLead = this.buildScalePattern(scaleNotes, [0, 2, 4, 2, 1, 0, 3, 1], 5);
+    
 
     
     return `// Trip Hop in ${key} at ${tempo} BPM
@@ -849,7 +889,7 @@ stack(
     const seventh = this.getMinorSeventh(safeKey);
     const minorThird = this.getMinorThird(safeKey);
     const scaleNotes = this.getScaleNotesForKey(safeKey, scale);
-    const scaleLead = this.buildScalePattern(scaleNotes, [0, 2, 4, 2, 1, 0, 3, 1], 5);
+    
 
     return `// Boom Bap in ${key} at ${tempo} BPM
 // Style: DJ Premier / Alchemist / Daringer
@@ -926,6 +966,87 @@ stack(
   }
 
   // ========================================
+  // Vibe Bruxaria Generator
+  // Style: More experimental, textural, and rhythmically complex patterns with a dark, mystical vibe
+  // ========================================
+
+  private generateBruxariaVibe(tempo: number): string {
+  const safeTempo = Math.max(120, Math.min(160, Math.round(tempo)));
+
+    return `// Vibe Ritimada at ${safeTempo} BPM
+    setcpm(${safeTempo})
+
+        let base= note("a1!5").s("gm_pizzicato_strings")
+          .lpf(500).lfo({s: "5!2 <10!2 20> 5!2", dep: 2})
+          .struct("- [- <x ->] <- x> - <x!2 ->")
+
+        let inst= s("noise*5").cutoff(perlin.fast(4).range(100,6000)).pan(perlin.fast(4))
+
+        let textura= stack(
+              note("c*5").s("metal:2")
+             .room(1).roomsize(3)
+             .almostNever(x=> x.ply("[2 3]|1")).gain(0.05).degradeBy(0.6),
+             
+              note("<<2@?0.1> 3@3?0.1 ~>").s("amencutup")
+             .room(3).pan(rand)
+             .degradeBy(0.1)
+             )
+
+       $: stack(
+       base.gain(sine.slow(1).range(0.2,0.9)),
+       inst.gain(sine.slow(0.2)).n(irand(5)),
+       textura.pan(saw.fast(2)).gain(sine.slow(3).range(0.0,0.1))
+   )`;
+}
+
+
+  // ========================================
+  // Vibe Ritimada Generator
+  // Style: Percussive, groove-based patterns with a focus on rhythm and vibe rather than melody
+  // ========================================
+
+   private generateVibeRitimada(tempo: number): string {
+    const safeTempo = Math.max(120, Math.min(160, Math.round(tempo)));
+
+    return `// Vibe Ritimada at ${safeTempo} BPM
+    setcpm(${safeTempo})
+
+    let perc = s("east, hh*16").cutoff(rand.range(100,6000))
+    let perc2 = s("[perc]*2").n(irand(16))
+
+    $: stack(
+      perc.pan(rand).gain(0.2).slow(1),
+      perc2.gain(0.25).pan(sine.slow(3)).delay(0.5)
+     )`;
+}
+
+  // ========================================
+  // Vibe Pisante Generator
+  // Style: Heavy, driving rhythms with a focus on percussion and groove, often using off-beat patterns and syncopation
+  // ========================================
+
+   private generateChaoPisante(tempo: number): string {
+    const safeTempo = Math.max(120, Math.min(160, Math.round(tempo)));
+
+    return `// Chao Pisante at ${safeTempo} BPM
+    setcpm(${safeTempo})
+
+    let drums =
+     s("lt:4").euclid(5,8)
+     .off(1/4, add(4)).gain(0.2).cutoff(200)
+     .off(3/16, x => x.speed(1.5).gain(0.2))
+
+    let drums2 =
+     s("lt:3").euclid(5,8).off(2/4, add(4)).gain(0.2).cutoff(200).pan(sine.slow(5))
+     .off(3/16, x => x.speed(1.5).gain(0.2).pan(perlin))
+
+    $: stack(
+      drums2.room(1).struct("[x ~ <x ~> ~]*4").mask("[1 [0|1] [0|1] [0|1]]*2"),
+      drums.room(1).pan(sine.fast(5))
+     )`;
+}
+
+  // ========================================
   // BRAZILIAN FUNK OUSADIA GENERATOR
   // Style: Funk SP / Baile Ousadia
   // ========================================
@@ -940,7 +1061,7 @@ stack(
     const n3 = at(3);
     const n4 = at(4);
     const n6 = at(6); // wraps automatically on shorter scales
-    const scaleLead = this.buildScalePattern(scaleNotes, [0, 2, 4, 2, 1, 0, 3, 1], 5);
+   
 
     return `// Brazilian Funk Ousadia in ${safeKey.toUpperCase()} at ${safeTempo} BPM
 // Style: Funk Carioca / Baile Funk
