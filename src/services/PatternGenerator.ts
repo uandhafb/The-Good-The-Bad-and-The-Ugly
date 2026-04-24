@@ -194,6 +194,30 @@ private pickUniform<T>(items: T[]): T {
   return items[Math.floor(Math.random() * items.length)];
 }
 
+private normalizeStyleInput(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+private resolveStyleAlias(input: string, aliases: Record<string, string>): string {
+  const normalized = this.normalizeStyleInput(input);
+
+  if (aliases[normalized]) return aliases[normalized];
+
+  const keys = Object.keys(aliases).sort((a, b) => b.length - a.length);
+  for (const key of keys) {
+    if (normalized.includes(key)) return aliases[key];
+  }
+
+  return normalized.replace(/\s+/g, '_');
+}
+
+
   private pickScaleForStyle(style: string, options: PatternOptions = {}): ScaleName {
   if (options.scale) return options.scale;
 
@@ -342,7 +366,113 @@ private pickUniform<T>(items: T[]): T {
 
           sound("[~ ~ ~ cp][~ cp] [~ ~] [cp ~ ] [~] [~ cp] [~] [cp ~]"),
         )`
-      ]
+      ],
+      
+      brazilian_funk_ritmado: [
+         // Minimal - hard kick and snare with space for vocals
+           `s("alesishr16_cp").struct("[x [~ x]][~ x] [~ x] [x ~]")`,
+
+         // medium - classic ritimado groove with added percussion
+            `stack(
+              s("alesishr16_cp").struct("[x [~ x]][~ x] [~ x] [x ~]"),
+              s("bossdr110_oh").struct("~ ~ [~ x] [x ~]")
+             )`,
+
+         // Complex - layered with additional percussion and space for vocals
+            `stack(
+             s("alesishr16_cp").struct("[x [~ x]][~ x] [~ x] [x ~]"),
+             s("bossdr110_oh").struct("~ ~ [~ x] [x ~]"),
+             s("dr220_lt").struct("x ~ ~ [~ x]").every(4, x => x.jux(rev()))
+             )`
+        ],
+
+      brazilian_funk_magrao: [
+       // Minimal - hard kick and snare with space for vocals
+           `s("alesishr16_cp").struct("[~ [~ x]][[~ x]] ~ x")`,
+
+       // Medium - classic magrão groove with added percussion
+             `stack(
+             s("alesishr16_cp").struct("[~ [~ x]][[~ x]] ~ x"),
+             s("bossdr110_oh").struct("x ~ [x x] [~[~ x]]")
+             )`,
+
+        // Complex - layered with additional percussion and space for vocals
+            `stack(
+            s("alesishr16_cp").struct("[~ [~ x]][[~ x]] ~ x"),
+            s("bossdr110_oh").struct("x ~ [x x] [~[~ x]]"),
+            s("dr220_lt").struct("x ~ ~ ~")
+            )`
+      ],
+
+      brazilian_funk_bruxaria: [
+                // Minimal - hard kick and snare with space for vocals
+                `stack(
+             s("hardkick") .struct("[~ [~ x]] [~ x] ~ [x ~]")
+             )`,
+                // Medium - classic bruxaria groove with added percussion
+                `stack(
+             s("hardkick") .struct("[~ [~ x]] [~ x] ~ [x ~]"),
+  
+             s("hardkick:3").struct("[x ~ ~ [x x]]")
+            )`,
+                // Complex - layered with additional percussion and space for vocals
+                `stack(
+             s("hardkick") .struct("[~ [~ x]] [~ x] ~ [x ~]"),
+             s("hardkick:3").struct("[x ~ ~ [x x]]"),
+
+             s("[bd <hh oh>]*2").bank("garden").struct("~ x [x[x x]] x"),
+             s("[808bd:1 <808cy 808oh>]*2").struct("~ x [x[x x]] x"),
+            )`
+
+            ],
+      brazilian_funk_zn: [
+                // Minimal - hard kick and snare with space for vocals
+                `stack(
+                  s("tg33_bd:5").struct("[x [~ x]][~ x] [~ x] [x ~]").cutoff(1000),
+                  s("tg33_bd:8").struct("~ ~ [x ~] ~")
+                 )`,
+                // Medium - classic bruxaria groove with added percussion
+                `arrange(
+                   [1, stack(
+                       s("tg33_bd:5").struct("[x [~ x]][~ x] [~ x] [x ~]").cutoff(1000),
+                       s("tg33_bd:8").struct("~ ~ [x ~] ~")
+                   )],
+                       [1, stack(
+                      s("tg33_bd:5").struct("[x [~ x]][~ x] [~ [x x]] [x x]").cutoff(1000),
+                      s("tg33_bd:8").struct("~ ~ [x ~] ~")
+                      )],
+                      [1, stack(
+                       s("tg33_bd:5").struct("[x [~ x]][~ x] [~ x] [x ~]").cutoff(1000),
+                       s("tg33_bd:8").struct("~ ~ [x ~] ~")
+                       ).room(saw.slow(4)).gain(saw.slow(4).range(0.5, 1))]
+                  )`,
+                // Complex - layered with additional percussion and space for vocals
+                `let um= stack(
+                      s("tg33_bd:5").struct("[x [~ x]][~ x] [~ x] [x ~]").cutoff(1000),
+                      s("tg33_bd:8").struct(" ~ ~ [x ~] ~")
+                     )
+
+                 let dois= stack (
+                  s("tg33_bd:5").struct("[x [~ x]][~ x] [~ [x x]] [x x]").cutoff(1000),
+                  s("tg33_bd:8").struct(" ~ ~ [x ~] ~")
+                  )
+
+                 let tres= stack(
+                  s("tg33_bd:8").struct("[x ~] ~ [~ [x x]] [~ x]").cutoff(1000),
+                  s("tg33_bd:5").struct(" ~ ~ [x ~] ~")
+                  )
+
+                 $: arrange(
+                 [1, um],
+                 [1, dois],
+                 [1, um.room(saw.slow(4)).gain(saw.slow(4).range(0.5, 1))],
+                 [1, um],
+                 [1, dois],
+                 [1, um],
+                 [1, tres.room(saw.slow(4)).gain(saw.slow(4).range(0.5, 1))]
+                 )`
+
+            ]
     };
 
     // Handle aliases
@@ -363,14 +493,37 @@ private pickUniform<T>(items: T[]): T {
       'alchemist': 'boom_bap',
       'daringer': 'boom_bap',
       'hitboy': 'boom_bap',
+      'brazilian_funk': 'brazilian_funk_ousadia',
       'brazilian funk': 'brazilian_funk_ousadia',
       'funk ousadia': 'brazilian_funk_ousadia',
       'brazilian funk ousadia': 'brazilian_funk_ousadia',
       'ousadia_brazilian_funk': 'brazilian_funk_ousadia',
-      'minimalist_brazilian_funk': 'brazilian_funk_ousadia'
+      'minimalist_brazilian_funk': 'brazilian_funk_ousadia',
+      'minimalist brazilian funk': 'brazilian_funk_magrao',
+      'brazilian_funk_magrao': 'brazilian_funk_magrao',
+      'magrao_brazilian_funk': 'brazilian_funk_magrao',
+      'magrao': 'brazilian_funk_magrao',
+      'magrao_funk': 'brazilian_funk_magrao',
+      'magrao funk': 'brazilian_funk_magrao',
+      'bruxaria_brazilian_funk': 'brazilian_funk_bruxaria',
+      'brazilian_funk_bruxaria': 'brazilian_funk_bruxaria',
+      'bruxaria': 'brazilian_funk_bruxaria',
+      'bruxaria_funk': 'brazilian_funk_bruxaria',
+      'bruxaria funk': 'brazilian_funk_bruxaria',
+      'zn_brazilian_funk': 'brazilian_funk_zn',
+      'brazilian_funk_zn': 'brazilian_funk_zn',
+      'zn': 'brazilian_funk_zn',
+      'zn_funk': 'brazilian_funk_zn',
+      'zn funk': 'brazilian_funk_zn',
+      'ritmado': 'brazilian_funk_ritmado',
+      'ritmado_funk': 'brazilian_funk_ritmado',
+      'ritmado funk': 'brazilian_funk_ritmado',
+      'brazilian_funk_ritmado': 'brazilian_funk_ritmado',
+      'funk ritmado': 'brazilian_funk_ritmado'
+
     };
 
-    const resolvedStyle = styleMap[style.toLowerCase()] || style.toLowerCase();
+    const resolvedStyle = this.resolveStyleAlias(style, styleMap);
     const stylePatterns = patterns[resolvedStyle] || patterns.techno;
     const index = Math.min(Math.floor(complexity * stylePatterns.length), stylePatterns.length - 1);
     return stylePatterns[index];
@@ -387,31 +540,46 @@ private pickUniform<T>(items: T[]): T {
     ? String(options.mood || 'groove')
     : 'groove';
 
+  const styleMap: Record<string, string> = {
+    'brazilian_funk': 'brazilian_funk_ousadia',
+    'funk ousadia': 'brazilian_funk_ousadia',
+    'bruxaria funk': 'brazilian_funk_bruxaria',
+    'ritmado': 'brazilian_funk_ritmado',
+    'magrao': 'brazilian_funk_magrao',
+    'zn': 'brazilian_funk_zn'
+  };
+
+  const requestedStyle = typeof options.style === 'string' ? options.style : 'brazilian_funk_ousadia';
+  const resolvedStyle = styleMap[requestedStyle.toLowerCase()] || requestedStyle.toLowerCase();
+
   const rawScale = typeof options.scale === 'string' ? options.scale : undefined;
   const safeScale = rawScale && this.allScalePool.includes(rawScale as ScaleName)
-  ? (rawScale as ScaleName)
-  : undefined;
+    ? (rawScale as ScaleName)
+    : undefined;
 
   const rawTags = Array.isArray(options.tags) ? options.tags.map(String) : undefined;
 
-  const selectedScale = this.pickScaleForStyle('brazilian_funk_ousadia', {
-  scale: safeScale,
-  tags: rawTags
-});
+  const selectedScale = this.pickScaleForStyle(resolvedStyle, {
+    scale: safeScale,
+    tags: rawTags
+  });
 
-const scaleMeta = this.getScaleMeta(selectedScale);
-const selectedMode: FunkMode | 'custom' = (
-  ['major', 'minor', 'dorian', 'mixolydian', 'harmonic_minor', 'melodic_minor'] as const
-).includes(selectedScale as any)
-  ? (selectedScale as FunkMode)
-  : 'custom';
+  const scaleMeta = this.getScaleMeta(selectedScale);
+  const selectedMode: FunkMode | 'custom' = (
+    ['major', 'minor', 'dorian', 'mixolydian', 'harmonic_minor', 'melodic_minor'] as const
+  ).includes(selectedScale as any)
+    ? (selectedScale as FunkMode)
+    : 'custom';
 
-const pattern = this.generateBrazilianFunkOusadia(key, safeTempo, selectedScale);
-const result: { pattern: string; metadata?: Record<string, unknown>; layers?: Record<string, string> } = { pattern };
+  const pattern = resolvedStyle === 'brazilian_funk_ousadia'
+    ? this.generateBrazilianFunkOusadia(key, safeTempo, selectedScale)
+    : this.generateDrumPattern(resolvedStyle, 0.7);
+
+  const result: { pattern: string; metadata?: Record<string, unknown>; layers?: Record<string, string> } = { pattern };
 
   if (options.includeMetadata !== false) {
     result.metadata = {
-      style: 'brazilian_funk_ousadia',
+      style: resolvedStyle,
       key: this.normalizeRoot(key).toUpperCase(),
       tempo: safeTempo,
       density: safeDensity,
@@ -424,16 +592,13 @@ const result: { pattern: string; metadata?: Record<string, unknown>; layers?: Re
   }
 
   if (options.includeLayers === true) {
-    result.layers = {
-      drums: 'bumbo1 + bumbo2 + bumbo3 + clave',
-      bass: 'grave',
-      harmony: 'intro'
-    };
+    result.layers = resolvedStyle === 'brazilian_funk_ousadia'
+      ? { drums: 'bumbo1 + bumbo2 + bumbo3 + clave', bass: 'grave', harmony: 'intro' }
+      : { drums: 'generated drum stack' };
   }
 
   return result;
 }
-
   /**
    * Generates a bassline pattern for a given key and style
    * @param key - Musical key (e.g., 'C', 'D', 'F#')
@@ -588,27 +753,49 @@ const result: { pattern: string; metadata?: Record<string, unknown>; layers?: Re
       'daringer': 'boom_bap',
       'hitboy': 'boom_bap',
       'brazilian_funk': 'brazilian_funk_ousadia',
+      'brazilian funk': 'brazilian_funk_ousadia',
       'funk ousadia': 'brazilian_funk_ousadia',
       'brazilian funk ousadia': 'brazilian_funk_ousadia',
       'ousadia_brazilian_funk': 'brazilian_funk_ousadia',
       'minimalist_brazilian_funk': 'brazilian_funk_ousadia',
+      'minimalist brazilian funk': 'brazilian_funk_magrao',
+      'brazilian_funk_magrao': 'brazilian_funk_magrao',
+      'magrao_brazilian_funk': 'brazilian_funk_magrao',
+      'magrao': 'brazilian_funk_magrao',
+      'magrao_funk': 'brazilian_funk_magrao',
+      'magrao funk': 'brazilian_funk_magrao',
+      'bruxaria_brazilian_funk': 'brazilian_funk_bruxaria',
+      'brazilian_funk_bruxaria': 'brazilian_funk_bruxaria',
+      'bruxaria': 'brazilian_funk_bruxaria',
+      'bruxaria_funk': 'brazilian_funk_bruxaria',
+      'bruxaria funk': 'brazilian_funk_bruxaria',
+      'zn_brazilian_funk': 'brazilian_funk_zn',
+      'brazilian_funk_zn': 'brazilian_funk_zn',
+      'zn': 'brazilian_funk_zn',
+      'zn_funk': 'brazilian_funk_zn',
+      'zn funk': 'brazilian_funk_zn',
       'ritimada': 'vibe_ritimada',
       'vibe ritimada': 'vibe_ritimada',
+      'vibe_ritimada': 'vibe_ritimada',
       'chao pisante': 'chao_pisante',
       'chao_pisante': 'chao_pisante',
       'pisante': 'chao_pisante',
       'bruxaria vibe': 'bruxaria-vibe',
-      'bruxaria introducao': 'bruxaria-vibe',
-      'bruxaria': 'bruxaria-vibe',
+      'bruxaria_vibe': 'bruxaria-vibe',
+      'bruxaria-vibe': 'bruxaria-vibe',
       'textura com escalas': 'textura_com_escalas',
       'textura_com_escalas': 'textura_com_escalas',
       'textura escalas': 'textura_com_escalas',
-
+      'ritmado': 'brazilian_funk_ritmado',
+      'ritmado_funk': 'brazilian_funk_ritmado',
+      'ritmado funk': 'brazilian_funk_ritmado',
+      'brazilian_funk_ritmado': 'brazilian_funk_ritmado',
+      'funk ritmado': 'brazilian_funk_ritmado'
 
 
     };
 
-    const resolvedStyle = styleMap[style.toLowerCase()] || style.toLowerCase();
+    const resolvedStyle = this.resolveStyleAlias(style, styleMap);
     const selectedScale: ScaleName = this.pickScaleForStyle(resolvedStyle, options);
 
 
@@ -973,7 +1160,7 @@ stack(
   private generateBruxariaVibe(tempo: number): string {
   const safeTempo = Math.max(120, Math.min(160, Math.round(tempo)));
 
-    return `// Vibe Ritimada at ${safeTempo} BPM
+    return `// Bruxaria Vibe at ${safeTempo} BPM
     setcpm(${safeTempo})
 
         let base= note("a1!5").s("gm_pizzicato_strings")

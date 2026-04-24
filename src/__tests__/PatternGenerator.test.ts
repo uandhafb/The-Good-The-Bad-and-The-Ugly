@@ -29,12 +29,26 @@ describe('PatternGenerator', () => {
     });
 
     test('should generate all supported drum styles', () => {
-      const styles = ['techno', 'house', 'dnb', 'breakbeat', 'trap', 'jungle', 'ambient', 'experimental'];
+      const styles = [
+        'techno', 'house', 'dnb', 'breakbeat', 'trap', 'jungle', 'ambient', 'experimental',
+        'brazilian_funk_ousadia', 'vibe_ritimada', 'chao_pisante', 'bruxaria-vibe'
+      ];
       styles.forEach(style => {
         const pattern = generator.generateDrumPattern(style, 0.5);
         expect(pattern).toBeTruthy();
         expect(pattern).toContain('s(');
       });
+    });
+
+    test('should resolve new Brazilian aliases for drum generation', () => {
+      const techno = generator.generateDrumPattern('techno', 0.5);
+      const bruxaria = generator.generateDrumPattern('bruxaria vibe', 0.5);
+      const ritimada = generator.generateDrumPattern('ritimada', 0.5);
+      const pisante = generator.generateDrumPattern('chao pisante', 0.5);
+
+      expect(bruxaria).not.toBe(techno);
+      expect(ritimada).not.toBe(techno);
+      expect(pisante).not.toBe(techno);
     });
 
     test('should default to techno for unknown styles', () => {
