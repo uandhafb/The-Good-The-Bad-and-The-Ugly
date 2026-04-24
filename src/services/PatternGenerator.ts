@@ -207,15 +207,23 @@ private normalizeStyleInput(text: string): string {
 private resolveStyleAlias(input: string, aliases: Record<string, string>): string {
   const normalized = this.normalizeStyleInput(input);
 
-  if (aliases[normalized]) return aliases[normalized];
+  const normalizedAliases: Array<[string, string]> = Object.entries(aliases).map(([k, v]) => [
+    this.normalizeStyleInput(k),
+    v
+  ]);
 
-  const keys = Object.keys(aliases).sort((a, b) => b.length - a.length);
-  for (const key of keys) {
-    if (normalized.includes(key)) return aliases[key];
+  for (const [k, v] of normalizedAliases) {
+    if (k === normalized) return v;
+  }
+
+  normalizedAliases.sort((a, b) => b[0].length - a[0].length);
+  for (const [k, v] of normalizedAliases) {
+    if (normalized.includes(k)) return v;
   }
 
   return normalized.replace(/\s+/g, '_');
 }
+
 
 
   private pickScaleForStyle(style: string, options: PatternOptions = {}): ScaleName {
@@ -242,29 +250,6 @@ private resolveStyleAlias(input: string, aliases: Record<string, string>): strin
   private voicingFromIntervals(root: string, intervals: number[], octave: number): string {
     return intervals.map(interval => `${this.getInterval(root, interval)}${octave}`).join(' ');
   }
-
-  private normalizeStyleInput(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[_-]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-private resolveStyleAlias(input: string, aliases: Record<string, string>): string {
-  const normalized = this.normalizeStyleInput(input);
-
-  if (aliases[normalized]) return aliases[normalized];
-
-  const keys = Object.keys(aliases).sort((a, b) => b.length - a.length);
-  for (const key of keys) {
-    if (normalized.includes(key)) return aliases[key];
-  }
-
-  return normalized.replace(/\s+/g, '_');
-}
 
   /**
    * Generates a drum pattern for a given style
@@ -449,6 +434,20 @@ private resolveStyleAlias(input: string, aliases: Record<string, string>): strin
             )`
 
             ],
+      chao_pisante: [
+                // Minimal - driving pisante pulse
+                `s("lt:4").euclid(5,8).gain(0.2).cutoff(200)`,
+                // Medium - syncopated two-layer groove
+                `stack(
+                  s("lt:4").euclid(5,8).off(1/4, add(4)).gain(0.2).cutoff(220),
+                  s("lt:3").euclid(5,8).off(2/4, add(4)).gain(0.18).cutoff(240).pan(sine.slow(5))
+                 )`,
+                // Complex - extra accents and movement
+                `stack(
+                  s("lt:4").euclid(5,8).off(1/4, add(4)).off(3/16, x => x.speed(1.5).gain(0.2)).gain(0.22).cutoff(230),
+                  s("lt:3").euclid(5,8).off(2/4, add(4)).off(3/16, x => x.speed(1.5).gain(0.2).pan(perlin)).gain(0.2).cutoff(250).pan(sine.slow(5))
+                 )`
+            ],
       brazilian_funk_zn: [
                 // Minimal - hard kick and snare with space for vocals
                 `stack(
@@ -548,7 +547,11 @@ private resolveStyleAlias(input: string, aliases: Record<string, string>): strin
       'ritmado_funk': 'brazilian_funk_ritmado',
       'ritmado funk': 'brazilian_funk_ritmado',
       'brazilian_funk_ritmado': 'brazilian_funk_ritmado',
-      'funk ritmado': 'brazilian_funk_ritmado'
+      'funk ritmado': 'brazilian_funk_ritmado',
+      'chao pisante': 'chao_pisante',
+      'chao_pisante': 'chao_pisante',
+      'pisante': 'chao_pisante',
+      'pisante funk': 'chao_pisante'
 
     };
 
@@ -783,6 +786,7 @@ private resolveStyleAlias(input: string, aliases: Record<string, string>): strin
       'brazilian_funk': 'brazilian_funk_ousadia',
       'brazilian funk': 'brazilian_funk_ousadia',
       'funk ousadia': 'brazilian_funk_ousadia',
+      'ousadia': 'brazilian_funk_ousadia',
       'brazilian funk ousadia': 'brazilian_funk_ousadia',
       'ousadia_brazilian_funk': 'brazilian_funk_ousadia',
       'minimalist_brazilian_funk': 'brazilian_funk_ousadia',
@@ -1182,10 +1186,6 @@ stack(
 ).swing(0.08)`;
   }
 
-  // ========================================
-  // Vibe Bruxaria Generator
-  // Style: More experimental, textural, and rhythmically complex patterns with a dark, mystical vibe
-  // ========================================
 
   private generateVibeRitimada(tempo: number): string {
   const safeTempo = Math.max(120, Math.min(160, Math.round(tempo)));

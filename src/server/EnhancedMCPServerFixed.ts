@@ -1064,6 +1064,7 @@ export class EnhancedMCPServerFixed {
             'harmonic_minor', 'melodic_minor', 'ritusen', 'pelog', 'hirajoshi',
             'iwato', 'enigmatic', 'prometheus'
           ] as const;
+        
           const requestedScale = knownScales.find((s) => {
             const spaced = s.replace(/_/g, ' ');
             return promptLc.includes(s) || promptLc.includes(spaced);
