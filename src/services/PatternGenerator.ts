@@ -61,6 +61,21 @@ private readonly styleScalePool: Record<string, ScaleName[]> = {
     prometheus: { tags: ['heroic', 'luminous', 'dramatic', 'expansive', 'visionary'], categories: ['fantasy', 'light'] }
   };
 
+  private readonly texturaComEscalas: Partial<Record<ScaleName, string[]>> = {
+    enigmatic: [
+      `$: s("industrial*16").gain(0.3).degradeBy(0).decay(0.5).n(irand(13)).scale("C:enigmatic").room(1).roomsize(3).pan(sine.slow(7))`,
+      `$: n("0 2 4 6 7 9 5").scale("C:enigmatic").jux(rev).gain(2).room(1).roomsize(3)`
+    ],
+    iwato: [
+      `let mouth2 = n("[15 14 13 <12 11 10> 9 8 7]*3 | [1 3 4 2 5 6]?0.2")
+  .scale("C:iwato")
+  .s("industrial:3")
+  .room(2)
+  .every(9, x => x.hurry(3).pan("<.5 1 .5 0>"))
+  .every(5, x => x.slow(5).ply("<2 7 3>").gain(0.3))`
+    ]
+  };
+
   // Note interval lookup for chord calculations
   private readonly notes = ['c', 'db', 'd', 'eb', 'e', 'f', 'gb', 'g', 'ab', 'a', 'bb', 'b'];
 
@@ -624,6 +639,28 @@ stack(
   // Melody
   ${melody}.struct("~ 1 ~ 1 1 ~ 1 ~").delay(0.25).room(0.3).gain(0.5)
 ).gain(0.8)`;
+  }
+
+  generateTexturaComEscalas(scale?: ScaleName, key: string = 'C', index: number = 0): string {
+    const availableScales = (Object.keys(this.texturaComEscalas) as ScaleName[])
+      .filter((s) => (this.texturaComEscalas[s]?.length ?? 0) > 0);
+
+    if (availableScales.length === 0) {
+      return '// No textura com escalas examples configured';
+    }
+
+    const chosenScale =
+      scale && (this.texturaComEscalas[scale]?.length ?? 0) > 0
+        ? scale
+        : this.pickUniform(availableScales);
+
+    const examples = this.texturaComEscalas[chosenScale]!;
+    const safeIndex = ((index % examples.length) + examples.length) % examples.length;
+
+    return examples[safeIndex].replaceAll(
+      `C:${chosenScale}`,
+      `${this.toTheoryRoot(key)}:${chosenScale}`
+    );
   }
 
   // ========================================

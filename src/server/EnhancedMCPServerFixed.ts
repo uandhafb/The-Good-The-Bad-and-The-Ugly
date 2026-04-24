@@ -1056,6 +1056,30 @@ export class EnhancedMCPServerFixed {
         if (args.bpm !== undefined) {
           InputValidator.validateBPM(args.bpm);
         }
+        const promptLc = args.style.toLowerCase();
+        if (promptLc.includes('textura com escalas')) {
+          const knownScales = [
+            'major', 'minor', 'dorian', 'phrygian', 'lydian', 'mixolydian',
+            'aeolian', 'locrian', 'pentatonic', 'blues', 'chromatic', 'wholetone',
+            'harmonic_minor', 'melodic_minor', 'ritusen', 'pelog', 'hirajoshi',
+            'iwato', 'enigmatic', 'prometheus'
+          ] as const;
+          const requestedScale = knownScales.find((s) => {
+            const spaced = s.replace(/_/g, ' ');
+            return promptLc.includes(s) || promptLc.includes(spaced);
+          });
+          const index = typeof args.index === 'number' && Number.isFinite(args.index)
+            ? Math.trunc(args.index)
+            : 0;
+          const generatedTextura = this.generator.generateTexturaComEscalas(requestedScale, args.key || 'C', index);
+          await this.writePatternSafe(generatedTextura);
+
+          if (args.auto_play && this.isInitialized) {
+            await this.controller.play();
+            return `Generated textura com escalas pattern${requestedScale ? ` (${requestedScale})` : ''}. Playing.`;
+          }
+          return `Generated textura com escalas pattern${requestedScale ? ` (${requestedScale})` : ''}`;
+        }
         const generated = this.generator.generateCompletePattern(
           args.style,
           args.key || 'C',
@@ -1694,6 +1718,46 @@ export class EnhancedMCPServerFixed {
         if (!this.isInitialized) {
           await this.controller.initialize();
           this.isInitialized = true;
+        }
+
+        const composePromptLc = args.style.toLowerCase();
+        if (composePromptLc.includes('textura com escalas')) {
+          const knownScales = [
+            'major', 'minor', 'dorian', 'phrygian', 'lydian', 'mixolydian',
+            'aeolian', 'locrian', 'pentatonic', 'blues', 'chromatic', 'wholetone',
+            'harmonic_minor', 'melodic_minor', 'ritusen', 'pelog', 'hirajoshi',
+            'iwato', 'enigmatic', 'prometheus'
+          ] as const;
+          const requestedScale = knownScales.find((s) => {
+            const spaced = s.replace(/_/g, ' ');
+            return composePromptLc.includes(s) || composePromptLc.includes(spaced);
+          });
+          const index = typeof args.index === 'number' && Number.isFinite(args.index)
+            ? Math.trunc(args.index)
+            : 0;
+          const texturaPattern = this.generator.generateTexturaComEscalas(
+            requestedScale,
+            args.key || 'C',
+            index
+          );
+          await this.controller.writePattern(texturaPattern);
+
+          const shouldPlayTextura = args.auto_play !== false;
+          if (shouldPlayTextura) {
+            await this.controller.play();
+          }
+
+          return {
+            success: true,
+            pattern: texturaPattern.substring(0, 200) + (texturaPattern.length > 200 ? '...' : ''),
+            metadata: {
+              style: args.style,
+              bpm: args.tempo || this.getDefaultTempo(args.style),
+              key: args.key || 'C'
+            },
+            status: shouldPlayTextura ? 'playing' : 'ready',
+            message: `Created textura com escalas pattern${requestedScale ? ` (${requestedScale})` : ''}${shouldPlayTextura ? ' - now playing' : ''}`
+          };
         }
 
         // Generate pattern
