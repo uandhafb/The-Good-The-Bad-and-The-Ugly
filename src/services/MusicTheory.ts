@@ -39,7 +39,12 @@ export class MusicTheory {
     cinematic_minor_extended: ['i9', 'VImaj9', 'IIImaj7', 'V13'],
    // Brazilian funk often uses minor keys with extended chords and modal interchange.
     brazilian_funk_ousadia: ['i9', 'bVII', 'VI', 'V13'],
-    brazilian_funk_ambient: ['i11', 'bVII', 'IV9', 'i9']
+    brazilian_funk_ambient: ['i11', 'bVII', 'IV9', 'i9'],
+    brazilian_funk_bruxaria: ['i9', 'bVII', 'bVI', 'V7'],
+    brazilian_funk_ritmado: ['i7', 'bVII', 'IV9', 'V7'],
+    brazilian_funk_magrao: ['i9', 'VI', 'bVII', 'V13'],
+    brazilian_funk_zn: ['i11', 'bVII', 'IV9', 'bVI'],
+  
   };
 
 /**

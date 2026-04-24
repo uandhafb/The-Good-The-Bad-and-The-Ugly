@@ -43,11 +43,11 @@ describe('PatternGenerator', () => {
     test('should resolve new Brazilian aliases for drum generation', () => {
       const techno = generator.generateDrumPattern('techno', 0.5);
       const bruxaria = generator.generateDrumPattern('bruxaria vibe', 0.5);
-      const ritimada = generator.generateDrumPattern('ritimada', 0.5);
+      const ritimada = generator.generateDrumPattern('ritmado', 0.5);
       const pisante = generator.generateDrumPattern('chao pisante', 0.5);
 
       expect(bruxaria).not.toBe(techno);
-      expect(ritimada).not.toBe(techno);
+      expect(ritmado).not.toBe(techno);
       expect(pisante).not.toBe(techno);
     });
 

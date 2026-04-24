@@ -242,6 +242,30 @@ private resolveStyleAlias(input: string, aliases: Record<string, string>): strin
   private voicingFromIntervals(root: string, intervals: number[], octave: number): string {
     return intervals.map(interval => `${this.getInterval(root, interval)}${octave}`).join(' ');
   }
+
+  private normalizeStyleInput(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+private resolveStyleAlias(input: string, aliases: Record<string, string>): string {
+  const normalized = this.normalizeStyleInput(input);
+
+  if (aliases[normalized]) return aliases[normalized];
+
+  const keys = Object.keys(aliases).sort((a, b) => b.length - a.length);
+  for (const key of keys) {
+    if (normalized.includes(key)) return aliases[key];
+  }
+
+  return normalized.replace(/\s+/g, '_');
+}
+
   /**
    * Generates a drum pattern for a given style
    * @param style - Music style (e.g., 'techno', 'house', 'dnb', 'ambient')
@@ -447,31 +471,36 @@ private resolveStyleAlias(input: string, aliases: Record<string, string>): strin
                        ).room(saw.slow(4)).gain(saw.slow(4).range(0.5, 1))]
                   )`,
                 // Complex - layered with additional percussion and space for vocals
-                `let um= stack(
-                      s("tg33_bd:5").struct("[x [~ x]][~ x] [~ x] [x ~]").cutoff(1000),
-                      s("tg33_bd:8").struct(" ~ ~ [x ~] ~")
-                     )
-
-                 let dois= stack (
-                  s("tg33_bd:5").struct("[x [~ x]][~ x] [~ [x x]] [x x]").cutoff(1000),
-                  s("tg33_bd:8").struct(" ~ ~ [x ~] ~")
-                  )
-
-                 let tres= stack(
-                  s("tg33_bd:8").struct("[x ~] ~ [~ [x x]] [~ x]").cutoff(1000),
-                  s("tg33_bd:5").struct(" ~ ~ [x ~] ~")
-                  )
-
-                 $: arrange(
-                 [1, um],
-                 [1, dois],
-                 [1, um.room(saw.slow(4)).gain(saw.slow(4).range(0.5, 1))],
-                 [1, um],
-                 [1, dois],
-                 [1, um],
-                 [1, tres.room(saw.slow(4)).gain(saw.slow(4).range(0.5, 1))]
-                 )`
-
+                `arrange(
+                      [1, stack(
+                        s("tg33_bd:5").struct("[x [~ x]][~ x] [~ x] [x ~]").cutoff(1000),
+                        s("tg33_bd:8").struct("~ ~ [x ~] ~")
+                       )],
+                      [1, stack(
+                        s("tg33_bd:5").struct("[x [~ x]][~ x] [~ [x x]] [x x]").cutoff(1000),
+                        s("tg33_bd:8").struct("~ ~ [x ~] ~")
+                       )],
+                       [1, stack(
+                       s("tg33_bd:5").struct("[x [~ x]][~ x] [~ x] [x ~]").cutoff(1000),
+                       s("tg33_bd:8").struct("~ ~ [x ~] ~")
+                       ).room(saw.slow(4)).gain(saw.slow(4).range(0.5, 1))],
+                       [1, stack(
+                        s("tg33_bd:5").struct("[x [~ x]][~ x] [~ x] [x ~]").cutoff(1000),
+                        s("tg33_bd:8").struct("~ ~ [x ~] ~")
+                       )],
+                       [1, stack(
+                       s("tg33_bd:5").struct("[x [~ x]][~ x] [~ [x x]] [x x]").cutoff(1000),
+                       s("tg33_bd:8").struct("~ ~ [x ~] ~")
+                       )],
+                       [1, stack(
+                       s("tg33_bd:5").struct("[x [~ x]][~ x] [~ x] [x ~]").cutoff(1000),
+                        s("tg33_bd:8").struct("~ ~ [x ~] ~")
+                       )],
+                       [1, stack(
+                       s("tg33_bd:8").struct("[x ~] ~ [~ [x x]] [~ x]").cutoff(1000),
+                       s("tg33_bd:5").struct("~ ~ [x ~] ~")
+                        ).room(saw.slow(4)).gain(saw.slow(4).range(0.5, 1))]
+                       )`
             ]
     };
 
@@ -550,7 +579,7 @@ private resolveStyleAlias(input: string, aliases: Record<string, string>): strin
   };
 
   const requestedStyle = typeof options.style === 'string' ? options.style : 'brazilian_funk_ousadia';
-  const resolvedStyle = styleMap[requestedStyle.toLowerCase()] || requestedStyle.toLowerCase();
+  const resolvedStyle = this.resolveStyleAlias(requestedStyle, styleMap);
 
   const rawScale = typeof options.scale === 'string' ? options.scale : undefined;
   const safeScale = rawScale && this.allScalePool.includes(rawScale as ScaleName)
@@ -727,8 +756,7 @@ private resolveStyleAlias(input: string, aliases: Record<string, string>): strin
    * @param key - Musical key (default: 'C')
    * @param bpm - Tempo in beats per minute (default: 120)
    * @returns Complete Strudel pattern with drums, bass, chords, and melody
-   */
-  generateCompletePattern(
+   */  generateCompletePattern(
   style: string,
   key: string = 'C',
   bpm: number = 120,
@@ -790,7 +818,9 @@ private resolveStyleAlias(input: string, aliases: Record<string, string>): strin
       'ritmado_funk': 'brazilian_funk_ritmado',
       'ritmado funk': 'brazilian_funk_ritmado',
       'brazilian_funk_ritmado': 'brazilian_funk_ritmado',
-      'funk ritmado': 'brazilian_funk_ritmado'
+      'funk ritmado': 'brazilian_funk_ritmado',
+      
+   
 
 
     };
@@ -813,13 +843,13 @@ private resolveStyleAlias(input: string, aliases: Record<string, string>): strin
        return this.generateBoomBap(key, bpm || 92, selectedScale);
 
        case 'vibe_ritimada':
-       return this.generateVibeRitimada(bpm || 120/4);
+       return this.generateVibeRitimada(bpm || 120);
 
        case 'chao_pisante':
-       return this.generateChaoPisante(bpm || 120/4);
+       return this.generateChaoPisante(bpm || 120);
 
        case 'bruxaria-vibe':
-       return this.generateBruxariaVibe(bpm || 120/4);
+       return this.generateBruxariaVibe(bpm || 120);
 
        case 'textura_com_escalas':
        return this.generateTexturaComEscalas(selectedScale, key, 0);
@@ -1157,81 +1187,67 @@ stack(
   // Style: More experimental, textural, and rhythmically complex patterns with a dark, mystical vibe
   // ========================================
 
-  private generateBruxariaVibe(tempo: number): string {
+  private generateVibeRitimada(tempo: number): string {
   const safeTempo = Math.max(120, Math.min(160, Math.round(tempo)));
+  return `// Vibe Ritimada at ${safeTempo} BPM
+setcpm(${safeTempo})
 
-    return `// Bruxaria Vibe at ${safeTempo} BPM
-    setcpm(${safeTempo})
+let perc = s("east, hh*16").cutoff(rand.range(100,6000))
+let perc2 = s("[perc]*2").n(irand(16))
 
-        let base= note("a1!5").s("gm_pizzicato_strings")
-          .lpf(500).lfo({s: "5!2 <10!2 20> 5!2", dep: 2})
-          .struct("- [- <x ->] <- x> - <x!2 ->")
-
-        let inst= s("noise*5").cutoff(perlin.fast(4).range(100,6000)).pan(perlin.fast(4))
-
-        let textura= stack(
-              note("c*5").s("metal:2")
-             .room(1).roomsize(3)
-             .almostNever(x=> x.ply("[2 3]|1")).gain(0.05).degradeBy(0.6),
-             
-              note("<<2@?0.1> 3@3?0.1 ~>").s("amencutup")
-             .room(3).pan(rand)
-             .degradeBy(0.1)
-             )
-
-       $: stack(
-       base.gain(sine.slow(1).range(0.2,0.9)),
-       inst.gain(sine.slow(0.2)).n(irand(5)),
-       textura.pan(saw.fast(2)).gain(sine.slow(3).range(0.0,0.1))
-   )`;
+$: stack(
+  perc.pan(rand).gain(0.2).slow(1),
+  perc2.gain(0.25).pan(sine.slow(3)).delay(0.5)
+)`;
 }
 
+private generateChaoPisante(tempo: number): string {
+  const safeTempo = Math.max(120, Math.min(160, Math.round(tempo)));
+  return `// Chao Pisante at ${safeTempo} BPM
+setcpm(${safeTempo})
 
-  // ========================================
-  // Vibe Ritimada Generator
-  // Style: Percussive, groove-based patterns with a focus on rhythm and vibe rather than melody
-  // ========================================
+let drums =
+  s("lt:4").euclid(5,8)
+    .off(1/4, add(4)).gain(0.2).cutoff(200)
+    .off(3/16, x => x.speed(1.5).gain(0.2))
 
-   private generateVibeRitimada(tempo: number): string {
-    const safeTempo = Math.max(120, Math.min(160, Math.round(tempo)));
+let drums2 =
+  s("lt:3").euclid(5,8).off(2/4, add(4)).gain(0.2).cutoff(200).pan(sine.slow(5))
+    .off(3/16, x => x.speed(1.5).gain(0.2).pan(perlin))
 
-    return `// Vibe Ritimada at ${safeTempo} BPM
-    setcpm(${safeTempo})
-
-    let perc = s("east, hh*16").cutoff(rand.range(100,6000))
-    let perc2 = s("[perc]*2").n(irand(16))
-
-    $: stack(
-      perc.pan(rand).gain(0.2).slow(1),
-      perc2.gain(0.25).pan(sine.slow(3)).delay(0.5)
-     )`;
+$: stack(
+  drums2.room(1).struct("[x ~ <x ~> ~]*4").mask("[1 [0|1] [0|1] [0|1]]*2"),
+  drums.room(1).pan(sine.fast(5))
+)`;
 }
 
-  // ========================================
-  // Vibe Pisante Generator
-  // Style: Heavy, driving rhythms with a focus on percussion and groove, often using off-beat patterns and syncopation
-  // ========================================
+private generateBruxariaVibe(tempo: number): string {
+  const safeTempo = Math.max(120, Math.min(160, Math.round(tempo)));
+  return `// Bruxaria Vibe at ${safeTempo} BPM
+setcpm(${safeTempo})
 
-   private generateChaoPisante(tempo: number): string {
-    const safeTempo = Math.max(120, Math.min(160, Math.round(tempo)));
+let base = note("a1!5").s("gm_pizzicato_strings")
+  .lpf(500).lfo({s: "5!2 <10!2 20> 5!2", dep: 2})
+  .struct("- [- <x ->] <- x> - <x!2 ->")
 
-    return `// Chao Pisante at ${safeTempo} BPM
-    setcpm(${safeTempo})
+let inst = s("noise*5").cutoff(perlin.fast(4).range(100,6000)).pan(perlin.fast(4))
 
-    let drums =
-     s("lt:4").euclid(5,8)
-     .off(1/4, add(4)).gain(0.2).cutoff(200)
-     .off(3/16, x => x.speed(1.5).gain(0.2))
+let textura = stack(
+  note("c*5").s("metal:2")
+    .room(1).roomsize(3)
+    .almostNever(x => x.ply("[2 3]|1")).gain(0.05).degradeBy(0.6),
+  note("<<2@?0.1> 3@3?0.1 ~>").s("amencutup")
+    .room(3).pan(rand)
+    .degradeBy(0.1)
+)
 
-    let drums2 =
-     s("lt:3").euclid(5,8).off(2/4, add(4)).gain(0.2).cutoff(200).pan(sine.slow(5))
-     .off(3/16, x => x.speed(1.5).gain(0.2).pan(perlin))
-
-    $: stack(
-      drums2.room(1).struct("[x ~ <x ~> ~]*4").mask("[1 [0|1] [0|1] [0|1]]*2"),
-      drums.room(1).pan(sine.fast(5))
-     )`;
+$: stack(
+  base.gain(sine.slow(1).range(0.2,0.9)),
+  inst.gain(sine.slow(0.2)).n(irand(5)),
+  textura.pan(saw.fast(2)).gain(sine.slow(3).range(0.0,0.1))
+)`;
 }
+
 
   // ========================================
   // BRAZILIAN FUNK OUSADIA GENERATOR
