@@ -1,29 +1,104 @@
-
-// Magrao 0.5 + Chao Pisante + Vibe Ritimada — tri-layer
-setcps(128/60/4)
+samples('github:tidalcycles/dirt-samples')
+samples('github:mot4i/garden')
+// Ousadia + Magrao + Euclid + Texture
+setcps(132/60/4)
 
 stack(
-  // ── DRUMS: magrao 0.5 ──
-  s("[bd <hh oh>]*2").bank("tr909").dec(.4).gain(0.9),
-  s("alesishr16_cp").struct("[~ [~ x]][[~ x]] ~ x").gain(0.75),
-  s("bossdr110_oh").struct("x ~ [x x] [~[~ x]]").gain(0.6),
+  // ── OUSADIA: locked 4-on-floor grid ──
+  s("bd*4").gain(0.88),
+  s("~ cp ~ cp").gain(0.72).room(0.15),
+  s("hh*8").gain(0.22).pan(sine.range(0.3, 0.7)),
 
-  // ── VIBE RITIMADA: locked groove foundation ──
-  s("bd*4").gain(0.5).bank("tr909"),
-  s("~ cp ~ cp").gain(0.45).room(0.2),
-  s("hh*8").gain(0.18).pan(rand.range(0.3, 0.7)),
+  // ── MAGRAO 0.5: sparse acoustic layers ──
+  s("alesishr16_cp").struct("[~ [~ x]][[~ x]] ~ x").gain(0.65),
+  s("bossdr110_oh").struct("x ~ [x x] [~[~ x]]").gain(0.55).pan(0.3),
 
-  // ── BASS: syncopated sawtooth ──
-  note("<c2 c2 f2 [g2 bb2]>*2")
-    .s("sawtooth")
-    .lpf("<400 600 400 500>")
-    .gain(0.65)
-    .dec(0.25)
-    .room(0.1),
+  // ── EUCLIDEAN RHYTHMS: polyrhythmic percussion ──
+  s("mt").euclid(3,8).gain(0.5).cutoff(400).pan(0.7),
+  s("ht").euclid(5,8).gain(0.42).cutoff(600).pan(0.25),
+  s("lt").euclid(7,16).gain(0.38).cutoff(280).pan(0.6),
+  s("rim").euclid(2,6).gain(0.35).room(0.3),
 
-  // ── TEXTURE: shimmer hats ──
-  s("hh*<4 8>")
-    .bank("tr909")
-    .gain("<0.2 0.3>")
-    .pan(sine.range(0.3, 0.7))
+  // ── TEXTURE: metallic shimmer ──
+  s("hh*<3 4 6 3>")
+    .gain("<0.12 0.18 0.1 0.2>")
+    .lpf(perlin.range(4000, 12000))
+    .pan(perlin.range(0.1, 0.9)),
+
+  // ── TEXTURE: sub drone pulse ──
+  note("c1*<1 2>")
+    .s("sine")
+    .gain(0.35)
+    .dec("<0.8 0.3>")
+    .lpf(80),
+
+  // ── TEXTURE: noise breath ──
+  s("wind")
+    .gain(perlin.range(0.05, 0.18))
+    .pan(sine.slow(7).range(0.2, 0.8))
+    .lpf(perlin.range(600, 3000))
+    .room(0.8)
 )
+
+❯ create a cool drums music using generate drum pattern ousadia generate drum pattern magrao and euclidian rythms with textural     
+instruments                                                                                                                         
+
+⏺ strudel - generate_drums (MCP)(style: "ousadia", complexity: 0.7)
+  ⎿  Generated ousadia drums
+
+⏺ strudel - get_pattern (MCP)
+  ⎿  s("bd*4, ~ cp ~ cp, hh*8")
+
+⏺ strudel - generate_drums (MCP)(style: "magrao", complexity: 0.5)
+  ⎿  Generated magrao drums
+
+⏺ strudel - get_pattern (MCP)
+  ⎿  s("bd*4, ~ cp ~ cp, hh*8")
+     stack(
+                  s("alesishr16_cp").struct("[~ [~ x]][[~ x]] ~ x"),
+     … +2 lines (ctrl+o to expand)
+
+⏺ Got both. Now building the full composition with euclidean layers and textures on top:
+
+⏺ strudel - write (MCP)(pattern: "\n// Ousadia + Magrao + Euclid + Texture\nsetcps(132/60/4)\n\nstack(\n  // ── OUSADIA: locked
+                       4-on-floor grid ──\n  s(\"bd*4\").gain(0.88),\n  s(\"~ cp ~ cp\").gain(0.72).room(0.15),\n
+                       s(\"hh*8\").gain(0.22).pan(sine.range(0.3, 0.7)),\n\n  // ── MAGRAO 0.5: sparse acoustic layers ──\n
+                       s(\"alesishr16_cp\").struct(\"[~ [~ x]][[~ x]] ~ x\").gain(0.65),\n  s(\"bossdr110_oh\").struct(\"x ~ [x x]
+                       [~[~ x]]\").gain(0.55).pan(0.3),\n\n  // ── EUCLIDEAN RHYTHMS: polyrhythmic percussion ──\n
+                       s(\"mt\").euclid(3,8).gain(0.5).cutoff(400).pan(0.7),\n
+                       s(\"ht\").euclid(5,8).gain(0.42).cutoff(600).pan(0.25),\n
+                       s(\"lt\").euclid(7,16).gain(0.38).cutoff(280).pan(0.6),\n  s(\"rim\").euclid(2,6).gain(0.35).room(0.3),\n\n
+                       // ── TEXTURE: metallic shimmer ──\n  s(\"hh*<3 4 6 3>\")\n    .gain(\"<0.12 0.18 0.1 0.2>\")\n
+                       .lpf(perlin.range(4000, 12000))\n    .pan(perlin.range(0.1, 0.9)),\n\n  // ── TEXTURE: sub drone pulse ──\n
+                       note(\"c1*<1 2>\")\n    .s(\"sine\")\n    .gain(0.35)\n    .dec(\"<0.8 0.3>\")\n    .lpf(80),\n\n  // ──
+                       TEXTURE: noise breath ──\n  s(\"wind\")\n    .gain(perlin.range(0.05, 0.18))\n
+                       .pan(sine.slow(7).range(0.2, 0.8))\n    .lpf(perlin.range(600, 3000))\n    .room(0.8)\n)\n", auto_play: true)
+  ⎿  Pattern written (1125 chars). Playing.
+
+⏺ Full percussion stack:
+
+  ┌────────────────────────┬───────────┬─────────────────────────────────────────┐
+  │         Layer          │   Type    │                 Detail                  │
+  ├────────────────────────┼───────────┼─────────────────────────────────────────┤
+  │ bd*4 + cp + hh*8       │ Ousadia   │ 4-on-floor anchor, 8th note hats        │
+  ├────────────────────────┼───────────┼─────────────────────────────────────────┤
+  │ alesishr16 + bossdr110 │ Magrao    │ Sparse acoustic clap/open-hat           │
+  ├────────────────────────┼───────────┼─────────────────────────────────────────┤
+  │ mt euclid(3,8)         │ Euclidean │ Mid tom, 3 hits over 8 steps            │
+  ├────────────────────────┼───────────┼─────────────────────────────────────────┤
+  │ ht euclid(5,8)         │ Euclidean │ High tom, 5/8 — classic African pattern │
+  ├────────────────────────┼───────────┼─────────────────────────────────────────┤
+  │ lt euclid(7,16)        │ Euclidean │ Low tom, 7/16 — dense polyrhythm        │
+  ├────────────────────────┼───────────┼─────────────────────────────────────────┤
+  │ rim euclid(2,6)        │ Euclidean │ Rimshot, 2/6 triplet feel               │
+  ├────────────────────────┼───────────┼─────────────────────────────────────────┤
+  │ Hats + perlin LPF      │ Texture   │ Metallic shimmer, random filtering      │
+  ├────────────────────────┼───────────┼─────────────────────────────────────────┤
+  │ Sine c1 pulse          │ Texture   │ Sub drone, alternating decay            │
+  ├────────────────────────┼───────────┼─────────────────────────────────────────┤
+  │ Wind noise             │ Texture   │ Breathing ambience, slow pan drift      │
+  └────────────────────────┴───────────┴─────────────────────────────────────────┘
+
+  Want to tweak any of the euclidean values, add melody, or evolve the energy?
+
+
