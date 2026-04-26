@@ -1,0 +1,186 @@
+samples('github:tidalcycles/dirt-samples')
+samples('github:mot4i/garden')
+// Bruxaria Funk 0.6 + Bruxaria Vibe — feitico completo
+setcps(140/60/4)
+
+stack(
+  // ── BRUXARIA FUNK 0.6: hard kicks, dark structure ──
+  s("hardkick").struct("[~ [~ x]] [~ x] ~ [x ~]").gain(0.9),
+  s("hardkick:3").struct("[x ~ ~ [x x]]").gain(0.8).lpf(200),
+
+  // ── BRUXARIA VIBE: layered percussion grid ──
+  s("[bd <hh oh>]*2").bank("garden").struct("~ x [x[x x]] x").gain(0.75),
+  s("[808bd:1 <808cy 808oh>]*2").struct("~ x [x[x x]] x").gain(0.7),
+
+  // ── BASS: dark 808 sub ──
+  note("<c1 c1 eb1 [g1 f1]>*2")
+    .s("sawtooth")
+    .lpf("<180 250 180 300>")
+    .gain(0.72)
+    .dec(0.4)
+    .distort(0.3),
+
+  // ── CHORDS: bruxaria tension ──
+  note("<[c3,eb3,gb3] ~ ~ [bb2,d3,f3] ~ ~ [ab2,c3,eb3] ~>")
+    .s("sawtooth")
+    .lpf(800)
+    .gain(0.3)
+    .room(0.7)
+    .slow(2),
+
+  // ── MELODY: witch hex line ──
+  note("<c4 eb4 ~ gb4 ~ f4 ~ eb4 ~ ~ c4 ~ bb3 ~ ~ ~>")
+    .s("sine")
+    .gain(0.4)
+    .delay(0.5)
+    .delayt(0.5)
+    .room(0.5)
+    .slow(2),
+
+  // ── TEXTURE: dark shimmer ──
+  s("hh*<4 6 8 4>")
+    .gain("<0.15 0.25>")
+    .pan(perlin.range(0.2, 0.8))
+    .lpf(8000)
+)
+
+now i want to create a generate pattern drum bruxaria funk 0.6 with a add of generate pattern complete bruxaria vibe              
+
+⏺ strudel - generate_drums (MCP)(style: "bruxaria funk", complexity: 0.6)
+  ⎿  Generated bruxaria funk drums
+
+⏺ strudel - get_pattern (MCP)
+  ⎿  stack(
+                  s("hardkick") .struct("[~ [~ x]] [~ x] ~ [x ~]"),
+     … +2 lines (ctrl+o to expand)
+
+
+⏺ strudel - generate_drums (MCP)(style: "bruxaria vibe", complexity: 0.7)
+  ⎿  Generated bruxaria vibe drums
+
+⏺ strudel - get_pattern (MCP)
+  ⎿  stack(
+                  s("hardkick") .struct("[~ [~ x]] [~ x] ~ [x ~]"),
+     … +9 lines (ctrl+o to expand)
+
+
+⏺ Good, got both. Now merging into one full composition:
+
+⏺ strudel - write (MCP)(pattern: "\n// Bruxaria Funk 0.6 + Bruxaria Vibe — feitico completo\nsetcps(140/60/4)\n\nstack(\n  // ──
+                       BRUXARIA FUNK 0.6: hard kicks, dark structure ──\n  s(\"hardkick\").struct(\"[~ [~ x]] [~ x] ~ [x
+                       ~]\").gain(0.9),\n  s(\"hardkick:3\").struct(\"[x ~ ~ [x x]]\").gain(0.8).lpf(200),\n\n  // ── BRUXARIA VIBE:
+                        layered percussion grid ──\n  s(\"[bd <hh oh>]*2\").bank(\"garden\").struct(\"~ x [x[x x]]
+                       x\").gain(0.75),\n  s(\"[808bd:1 <808cy 808oh>]*2\").struct(\"~ x [x[x x]] x\").gain(0.7),\n\n  // ── BASS:
+                       dark 808 sub ──\n  note(\"<c1 c1 eb1 [g1 f1]>*2\")\n    .s(\"sawtooth\")\n    .lpf(\"<180 250 180 300>\")\n
+                         .gain(0.72)\n    .dec(0.4)\n    .distort(0.3),\n\n  // ── CHORDS: bruxaria tension ──\n
+                       note(\"<[c3,eb3,gb3] ~ ~ [bb2,d3,f3] ~ ~ [ab2,c3,eb3] ~>\")\n    .s(\"sawtooth\")\n    .lpf(800)\n
+                       .gain(0.3)\n    .room(0.7)\n    .slow(2),\n\n  // ── MELODY: witch hex line ──\n  note(\"<c4 eb4 ~ gb4 ~ f4 ~
+                        eb4 ~ ~ c4 ~ bb3 ~ ~ ~>\")\n    .s(\"sine\")\n    .gain(0.4)\n    .delay(0.5)\n    .delayt(0.5)\n
+                       .room(0.5)\n    .slow(2),\n\n  // ── TEXTURE: dark shimmer ──\n  s(\"hh*<4 6 8 4>\")\n    .gain(\"<0.15
+                       0.25>\")\n    .pan(perlin.range(0.2, 0.8))\n    .lpf(8000)\n)\n", auto_play: true)
+  ⎿  Pattern written (1102 chars). Playing.
+
+⏺ Running. Full stack breakdown:
+
+  ┌───────────────────────┬───────────────────┬───────────────────────────────────────┐
+  │         Layer         │      Source       │               Character               │
+  ├───────────────────────┼───────────────────┼───────────────────────────────────────┤
+  │ hardkick + hardkick:3 │ Bruxaria Funk 0.6 │ Dark staggered kicks, syncopated      │
+  ├───────────────────────┼───────────────────┼───────────────────────────────────────┤
+  │ bd/hh/oh (garden)     │ Bruxaria Vibe     │ Garden bank percussion grid           │
+  ├───────────────────────┼───────────────────┼───────────────────────────────────────┤
+  │ 808bd + 808cy/oh      │ Bruxaria Vibe     │ 808 sub kicks + cymbals               │
+  ├───────────────────────┼───────────────────┼───────────────────────────────────────┤
+  │ Bass                  │ —                 │ Distorted sawtooth sub, c→eb→g→f      │
+  ├───────────────────────┼───────────────────┼───────────────────────────────────────┤
+  │ Chords                │ —                 │ Tritone tension, dim/minor voicings   │
+  ├───────────────────────┼───────────────────┼───────────────────────────────────────┤
+  │ Melody                │ —                 │ Hex scale line, half-speed with echo  │
+  ├───────────────────────┼───────────────────┼───────────────────────────────────────┤
+  │ Texture               │ —                 │ Perlin-panned hats, irregular density │
+  └───────────────────────┴───────────────────┴───────────────────────────────────────┘
+
+  Heavy and dark. Want to add another layer, shift the key, raise the tempo, or bring in a break?
+
+
+Churned for 34s
+
+❯ can you shift the key for un unpredictable scale?                                                                                 
+                                                                                                                                  
+⏺ strudel - apply_scale (MCP)(scale: "enigmatic", root: "f#")                                                                       
+  ⎿  Error: Unknown tool: apply_scale                                                                                               
+                             
+⏺ strudel - generate_scale (MCP)(root: "f#", scale: "enigmatic")                                                                    
+  ⎿  f# enigmatic scale: F#, G, A#, C, D, E, F                                                                                    
+                                                                                                                                    
+⏺ F# enigmatic scale: F#, G, A#, C, D, E, F — tritones everywhere, no comfortable resolution. Rewriting the whole song:             
+                                                                                                                                    
+⏺ strudel - write (MCP)(pattern: "\n// Bruxaria Funk 0.6 + Bruxaria Vibe — F# Enigmatic\nsetcps(140/60/4)\n\nstack(\n  // ──        
+                       BRUXARIA FUNK 0.6 ──\n  s(\"hardkick\").struct(\"[~ [~ x]] [~ x] ~ [x ~]\").gain(0.9),\n                     
+                       s(\"hardkick:3\").struct(\"[x ~ ~ [x x]]\").gain(0.8).lpf(200),\n\n  // ── BRUXARIA VIBE ──\n  s(\"[bd <hh   
+                       oh>]*2\").bank(\"garden\").struct(\"~ x [x[x x]] x\").gain(0.75),\n  s(\"[808bd:1 <808cy                     
+                       808oh>]*2\").struct(\"~ x [x[x x]] x\").gain(0.7),\n\n  // ── BASS: F# enigmatic root movement ──\n          
+                       note(\"<f#1 g1 c1 [d1 f1]>*2\")\n    .s(\"sawtooth\")\n    .lpf(\"<180 250 180 300>\")\n    .gain(0.72)\n    
+                       .dec(0.4)\n    .distort(0.3),\n\n  // ── CHORDS: dissonant enigmatic voicings ──\n  note(\"<[f#3,a#3,d4] ~ ~ 
+                       [g3,c4,e4] ~ ~ [f#3,c4,f4] ~>\")\n    .s(\"sawtooth\")\n    .lpf(900)\n    .gain(0.3)\n    .room(0.75)\n     
+                       .slow(2),\n\n  // ── MELODY: enigmatic hex line ──\n  note(\"<f#4 g4 ~ a#4 ~ c5 ~ d5 ~ e5 ~ f4 ~ ~ f#4       
+                       ~>\")\n    .s(\"sine\")\n    .gain(0.42)\n    .delay(0.5)\n    .delayt(0.5)\n    .room(0.55)\n               
+                       .slow(2),\n\n  // ── TEXTURE ──\n  s(\"hh*<4 6 8 4>\")\n    .gain(\"<0.15 0.25>\")\n
+                       .pan(perlin.range(0.2, 0.8))\n    .lpf(8000)\n)\n", auto_play: true)
+  ⎿  Pattern written (1062 chars). Playing.
+                             
+⏺ Shifted to F# Enigmatic — one of the most harmonically unstable scales that exists. What makes it weird:                        
+                                                                                                                                  
+  - F# root but G (b2) immediately undermines it                                                                                    
+  - A# augmented 2nd creates a gap that feels wrong                                                                                 
+  - C diminished 4th adds tritone tension against the root                                                                          
+  - F natural at the top — a semitone below the root — refuses to resolve                                                           
+                                                                                                                                    
+  The chords [f#,a#,d] → [g,c,e] → [f#,c,f] are basically three unsettled shapes with no home. Sounds cursed. Want to push it
+  further or lock it to something?
+
+
+
+// Bruxaria Funk 0.6 + Bruxaria Vibe — F# Enigmatic
+setcps(140/60/4)
+
+stack(
+  // ── BRUXARIA FUNK 0.6 ──
+  s("hardkick").struct("[~ [~ x]] [~ x] ~ [x ~]").gain(0.9),
+  s("hardkick:3").struct("[x ~ ~ [x x]]").gain(0.8).lpf(200),
+
+  // ── BRUXARIA VIBE ──
+  s("[bd <hh oh>]*2").bank("garden").struct("~ x [x[x x]] x").gain(0.75),
+  s("[808bd:1 <808cy 808oh>]*2").struct("~ x [x[x x]] x").gain(0.7),
+
+  // ── BASS: F# enigmatic root movement ──
+  note("<f#1 g1 c1 [d1 f1]>*2")
+    .s("sawtooth")
+    .lpf("<180 250 180 300>")
+    .gain(0.72)
+    .dec(0.4)
+    .distort(0.3),
+
+  // ── CHORDS: dissonant enigmatic voicings ──
+  note("<[f#3,a#3,d4] ~ ~ [g3,c4,e4] ~ ~ [f#3,c4,f4] ~>")
+    .s("sawtooth")
+    .lpf(900)
+    .gain(0.3)
+    .room(0.75)
+    .slow(2),
+
+  // ── MELODY: enigmatic hex line ──
+  note("<f#4 g4 ~ a#4 ~ c5 ~ d5 ~ e5 ~ f4 ~ ~ f#4 ~>")
+    .s("sine")
+    .gain(0.42)
+    .delay(0.5)
+    .delayt(0.5)
+    .room(0.55)
+    .slow(2),
+
+  // ── TEXTURE ──
+  s("hh*<4 6 8 4>")
+    .gain("<0.15 0.25>")
+    .pan(perlin.range(0.2, 0.8))
+    .lpf(8000)
+)
