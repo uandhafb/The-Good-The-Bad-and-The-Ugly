@@ -1,0 +1,115 @@
+setcpm(125/4/2)
+
+$: stack(
+  s("[bd <hh oh>]*2").bank("tr909").dec(.4),
+  s("lt").struct("[1 0 0 0]").gain(1.0).room(1).size(7),
+  s("[~] [~] [~] [~] [~] [lt lt@2 lt] [~] [[lt lt] [lt lt lt lt lt]]")
+    .pan(rand)
+    .delayfb(1),
+  sound("[~ ~ ~ cp][~ cp] [~ ~] [cp ~ ] [~] [~ cp] [~] [cp ~]"),
+)
+
+
+ ▐▛███▜▌   Claude Code v2.1.71
+▝▜█████▛▘  Sonnet 4.6 · API Usage Billing
+  ▘▘ ▝▝    ~/TF_ClaudeMCP/strudel-mcp-server
+
+❯ chat                                                                                                                      
+
+⏺ Hey, what's up?
+
+❯ intialize strudel                                                                                                         
+
+⏺ strudel - init (MCP)
+  ⎿  Strudel initialized successfully
+
+⏺ Strudel is up and running.
+
+❯ create a complex drum funk ousadia                                                                                        
+
+⏺ Searched for 4 patterns (ctrl+o to expand)
+
+⏺ The style is already supported. Let me generate it with max complexity and auto-play.
+
+⏺ strudel - generate_drums (MCP)(style: "brazilian_funk_ousadia", complexity: 1)
+  ⎿  Generated brazilian_funk_ousadia drums
+
+⏺ strudel - play (MCP)
+  ⎿  Playing
+
+⏺ strudel - get_pattern (MCP)
+  ⎿  $: s("[bd <hh oh>]*2").bank("tr909").dec(.4)
+     stack(
+               s("lt")
+     … +5 lines (ctrl+o to expand)
+
+⏺ Playing. Here's the pattern:
+
+  $: s("[bd <hh oh>]*2").bank("tr909").dec(.4)
+  stack(
+    s("lt")
+      .struct("[1 0 0 0]")
+      .room(1).size(7),
+    sound("[~ ~ ~ cp][~ cp] [~ ~] [cp ~ ] [~] [~ cp] [~] [cp ~]"),
+  )
+
+  The bumbo (lt) anchors the downbeat with heavy reverb, while the clave/clap pattern throws syncopated hits across the bar
+  — classic ousadia feel. Want me to layer in a bassline or melody on top?
+
+❯ add a setcpm(125/4/2)                                                                                                     
+
+⏺ strudel - write (MCP)(pattern: "setcpm(125/4/2)\n$: s(\"[bd <hh oh>]*2\").bank(\"tr909\").dec(.4)\nstack(\n  s(\"lt\")\n
+                         .struct(\"[1 0 0 0]\")\n    .room(1).size(7),\n  sound(\"[~ ~ ~ cp][~ cp] [~ ~] [cp ~ ] [~] [~ cp]
+                       [~] [cp ~]\"),\n)", auto_play: true)
+  ⎿  Pattern written (191 chars). Playing.
+
+⏺ Done — setcpm(125/4/2) added at the top, locking the tempo to ~15.625 CPM (125 BPM equivalent). Playing now.
+
+❯ add a bumbo layer funk ousadia                                                                                            
+
+⏺ Searched for 1 pattern (ctrl+o to expand)
+
+⏺ Now I can see the full bumbo structure. I'll add bumbo2 and bumbo3 to the current pattern.
+
+⏺ strudel - write (MCP)(pattern: "setcpm(125/4/2)\n\nlet bumbo1 = s(\"lt\")\n  .struct(\"[1 0 0 0]\")\n  .gain(1.0)\n
+                       .room(1).size(7)\n\nlet bumbo2 = s(\"[~] [~] [~] [~] [~] [lt lt@2 lt] [lt lt@2 lt] [lt lt@2 lt]\")\n
+                        .pan(rand)\n  .room(0)\n\nlet bumbo3 = s(\"[~] [~] [~] [~] [~] [lt lt@2 lt] [~] [[lt lt] [lt lt lt
+                       lt lt]]\")\n  .pan(rand)\n  .delayfb(1)\n\n$: stack(\n  s(\"[bd <hh
+                       oh>]*2\").bank(\"tr909\").dec(.4),\n  bumbo1,\n  bumbo2,\n  bumbo3,\n  sound(\"[~ ~ ~ cp][~ cp] [~ ~]
+                        [cp ~ ] [~] [~ cp] [~] [cp ~]\"),\n)", auto_play: true)
+  ⎿  Pattern written (457 chars). Playing.
+
+⏺ Added all three bumbo layers:
+
+  - bumbo1 — downbeat anchor (lt, struct [1 0 0 0], heavy reverb)
+  - bumbo2 — syncopated triplet rolls in the back half, panned randomly
+  - bumbo3 — sparse variation with delay feedback for that cascading ousadia tail
+
+❯ want just bumbo 3,erase bumbo 1 and bumbo 2                                                                               
+
+⏺ strudel - write (MCP)(pattern: "setcpm(125/4/2)\n\nlet bumbo3 = s(\"[~] [~] [~] [~] [~] [lt lt@2 lt] [~] [[lt lt] [lt lt
+                       lt lt lt]]\")\n  .pan(rand)\n  .delayfb(1)\n\n$: stack(\n  s(\"[bd <hh
+                       oh>]*2\").bank(\"tr909\").dec(.4),\n  bumbo3,\n  sound(\"[~ ~ ~ cp][~ cp] [~ ~] [cp ~ ] [~] [~ cp]
+                       [~] [cp ~]\"),\n)", auto_play: true)
+  ⎿  Pattern written (258 chars). Playing.
+
+⏺ Done — bumbo1 and bumbo2 removed, only bumbo3 left.
+
+❯ add bubo 3 inside the stack                                                                                               
+
+⏺ strudel - write (MCP)(pattern: "setcpm(125/4/2)\n\n$: stack(\n  s(\"[bd <hh oh>]*2\").bank(\"tr909\").dec(.4),\n  s(\"[~]
+                       [~] [~] [~] [~] [lt lt@2 lt] [~] [[lt lt] [lt lt lt lt lt]]\")\n    .pan(rand)\n    .delayfb(1),\n
+                       sound(\"[~ ~ ~ cp][~ cp] [~ ~] [cp ~ ] [~] [~ cp] [~] [cp ~]\"),\n)", auto_play: true)
+  ⎿  Pattern written (241 chars). Playing.
+
+⏺ Done — bumbo3 inlined directly into the stack.
+
+❯ bring back the lt                                                                                                         
+
+⏺ strudel - write (MCP)(pattern: "setcpm(125/4/2)\n\n$: stack(\n  s(\"[bd <hh oh>]*2\").bank(\"tr909\").dec(.4),\n
+                       s(\"lt\").struct(\"[1 0 0 0]\").gain(1.0).room(1).size(7),\n  s(\"[~] [~] [~] [~] [~] [lt lt@2 lt]
+                       [~] [[lt lt] [lt lt lt lt lt]]\")\n    .pan(rand)\n    .delayfb(1),\n  sound(\"[~ ~ ~ cp][~ cp] [~ ~]
+                        [cp ~ ] [~] [~ cp] [~] [cp ~]\"),\n)", auto_play: true)
+  ⎿  Pattern written (298 chars). Playing.
+
+⏺ Done — bumbo1 (lt downbeat) is back in the stack.

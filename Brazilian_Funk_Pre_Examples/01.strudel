@@ -1,0 +1,314 @@
+
+//1.Prompt:Generate a brazilian funk beat
+
+//Output: only resemblance is in the tempo choice.
+
+// brazilian funk pattern in C at 130 BPM
+setcpm(130)
+
+stack(
+  // Drums
+  s("bd*4, ~ cp ~ cp, hh*8"),
+  
+  // Bass
+  note("C2 C2 C2 C2").s("sawtooth").cutoff(800),
+  
+  // Chords
+  note("<C G Am F>").s("sawtooth").struct("1 ~ 1 ~").release(0.1).gain(0.6),
+  
+  // Melody
+  note("f5 g5 f3 g4 d4 g3 g#4 g3").s("triangle").struct("~ 1 ~ 1 1 ~ 1 ~").delay(0.25).room(0.3).gain(0.5)
+).gain(0.8)
+
+//2.Prompt: change for a minor key
+//Model's Reasoning:Tool use strudel - shift_mood(target_mood: "melancholic", intensity: 0.7, auto_play: true) (MCP)          
+//Transform current pattern to match a different emotional mood by adjusting tempo,effects, and note choices. 
+//Moods: dark, euphoric, melancholic, aggressive, dreamy, peaceful, energetic.
+
+// brazilian funk pattern in A at 130 BPM
+setcpm(130)
+
+stack(
+  // Drums
+  s("bd*4, ~ cp ~ cp, hh*8"),
+  
+  // Bass
+  note("A2 A2 A2 A2").s("sawtooth").cutoff(800),
+  
+  // Chords
+  note("<A E F#m D>").s("sawtooth").struct("1 ~ 1 ~").release(0.1).gain(0.6),
+  
+  // Melody
+  note("d4 c3 d4 c4 b4 a4 g4 f4").s("triangle").struct("~ 1 ~ 1 1 ~ 1 ~").delay(0.25).room(0.3).gain(0.5)
+).gain(0.8)
+.slow(1.12).lpf(930).room(0.21).gain(0.96)
+
+//3.Prompt: change the bass layer in a classic tamborzão style.
+//Model Reasoning: Tool use strudel - generate_bassline(style: "tamborzao", key: "A") (MCP) Generate bassline 
+
+// brazilian funk pattern in A at 130 BPM
+setcpm(130)
+
+stack(
+  // Drums
+  s("bd*4, ~ cp ~ cp, hh*8"),
+  
+  // Bass
+  note("A2 A2 A2 A2").s("sawtooth").cutoff(800),
+  
+  // Chords
+  note("<A E F#m D>").s("sawtooth").struct("1 ~ 1 ~").release(0.1).gain(0.6),
+  
+  // Melody
+  note("d4 c3 d4 c4 b4 a4 g4 f4").s("triangle").struct("~ 1 ~ 1 1 ~ 1 ~").delay(0.25).room(0.3).gain(0.5),
+
+  note("A2 A2 A2 A2").s("sawtooth").cutoff(800)
+
+).gain(0.8).slow(1.12).lpf(930).room(0.21).gain(0.96)
+
+//Asked user's feedbackt: ⏺ Tamborzão bass layer locked in — that syncopated kick-bass pattern driving it now. How's 
+//it sounding? Want to layer anything on top or tweak the groove? ● How is Claude doing this session? (optional) 1: Bad    2: Fine   3: Good   0: Dismiss                                                 
+                                                 
+//4.Prompt: make it groove in the Rio de Janeiro classic funk style.
+//Model's Reasoning: Tool use strudel - jam_with(layer: "drums", style_hint: "Rio de Janeiro baile funk classic groove, heavy tamborzão kick pattern, syncopated snare, gritty lo-fi texture",
+// auto_play: true) (MCP) AI generates a complementary layer to jam with your pattern. Analyzes current pattern to detect tempo, key, and existing layers, then generates a matching layer that fits musically.
+
+// brazilian funk pattern in A at 130 BPM
+setcpm(130)
+
+stack(
+  // Drums
+  s("bd*4, ~ cp ~ cp, hh*8",
+
+  // Jam drums layer
+  s("~ hh ~ hh, ~ ~ oh ~").gain(0.4).hpf(5000)
+),
+  
+  // Bass
+  note("A2 A2 A2 A2").s("sawtooth").cutoff(800),
+  
+  // Chords
+  note("<A E F#m D>").s("sawtooth").struct("1 ~ 1 ~").release(0.1).gain(0.6),
+  
+  // Melody
+  note("d4 c3 d4 c4 b4 a4 g4 f4").s("triangle").struct("~ 1 ~ 1 1 ~ 1 ~").delay(0.25).room(0.3).gain(0.5),
+
+  note("A2 A2 A2 A2").s("sawtooth").cutoff(800)
+
+).gain(0.8).slow(1.12).lpf(930).room(0.21).gain(0.96)
+
+//5.Prompt: add a melody line as a singer and a dance energy as Annitta brazilian artist
+//Model's reasoning: Tool use strudel - jam_with(layer: "melody", style_hint: "Anitta Brazilian baile funk singer,    
+//catchy vocal-style lead melody, Rio funk dancefloor energy, playful and seductive phrasing", auto_play: true) (MCP)
+//AI generates a complementary layer to jam with your pattern. Analyzes current pattern to detect tempo, key, and existing layers, then generates a matching layer that fits musically.
+//Tool use strudel - set_energy(level: 9) (MCP) Adjust the overall energy level of the current pattern on a 0-10 scale. 0:              
+// minimal/ambient, 1-2: sparse, 3-4: light/relaxed, 5-6: normal/moderate, 7-8: driving/intense, 9-10: maximum. Auto-plays after applying energy level.   
+
+// brazilian funk pattern in A at 130 BPM
+setcpm(130)
+
+stack(
+  // Drums
+  s("bd*4, ~ cp ~ cp, hh*8",
+
+  // Jam drums layer
+  s("~ hh ~ hh, ~ ~ oh ~",
+
+  // Jam melody layer
+  note("c4 b5 a4 d6 e4 d4 e6 f6").s("triangle").room(0.3).gain(0.5)
+).gain(0.4).hpf(5000)
+),
+  
+  // Bass
+  note("A2 A2 A2 A2").s("sawtooth").cutoff(800),
+  
+  // Chords
+  note("<A E F#m D>").s("sawtooth").struct("1 ~ 1 ~").release(0.1).gain(0.6),
+  
+  // Melody
+  note("d4 c3 d4 c4 b4 a4 g4 f4").s("triangle").struct("~ 1 ~ 1 1 ~ 1 ~").delay(0.25).room(0.3).gain(0.5),
+
+  note("A2 A2 A2 A2").s("sawtooth").cutoff(800)
+
+).gain(0.8).slow(1.12).lpf(930).room(0.21).gain(0.96).fast(1.75).room(0.02)
+
+//6.Prompt: add a conditional modifier in the stack.
+
+// brazilian funk pattern in A at 130 BPM - with conditional modifiers
+
+setcpm(130)
+
+stack(
+  // Drums - every 4 cycles double kick for a fill
+  s("bd*4, ~ cp ~ cp, hh*8")
+    .every(4, x => x.fast(2))
+    .sometimes(x => x.crush(8)),
+
+  // Hi-hat layer - occasionally reverse for groove variation
+  s("~ hh ~ hh, ~ ~ oh ~")
+    .gain(0.4).hpf(5000)
+    .every(3, x => x.rev()),
+
+  // Bass - sometimes add distortion for grit
+  note("A2 A2 A2 A2").s("sawtooth").cutoff(800)
+    .sometimes(x => x.distort(0.3)),
+
+  // Chords
+  note("<A E F#m D>").s("sawtooth").struct("1 ~ 1 ~").release(0.1).gain(0.6),
+
+  // Anitta vocal-style melody - every 2 cycles shift up an octave
+  note("c4 b5 a4 d6 e4 d4 e6 f6").s("triangle").room(0.3).gain(0.5)
+    .every(2, x => x.add(note(12))),
+
+  // Melody layer - rarely glitch for texture
+  note("d4 c3 d4 c4 b4 a4 g4 f4").s("triangle")
+    .struct("~ 1 ~ 1 1 ~ 1 ~").delay(0.25).room(0.3).gain(0.5)
+    .rarely(x => x.crush(6))
+
+).gain(0.8).slow(1.12).lpf(930).room(0.21)
+
+//7.Prompt: shift for a swing dance mood for people dance in the floor.     
+//Model's reasoning: Tool use strudel - shift_mood(target_mood: "euphoric", intensity: 0.8, auto_play: true) (MCP) 
+//Transform current pattern to match a different emotional mood by adjusting tempo, effects, and note choices. Moods: dark, euphoric, melancholic, aggressive, dreamy,      
+//peaceful, energetic.
+
+// brazilian funk pattern in A at 130 BPM - with conditional modifiers
+
+setcpm(130)
+
+stack(
+  // Drums - every 4 cycles double kick for a fill
+  s("bd*4, ~ cp ~ cp, hh*8")
+    .every(4, x => x.fast(2))
+    .sometimes(x => x.crush(8)),
+
+  // Hi-hat layer - occasionally reverse for groove variation
+  s("~ hh ~ hh, ~ ~ oh ~")
+    .gain(0.4).hpf(5000)
+    .every(3, x => x.rev()),
+
+  // Bass - sometimes add distortion for grit
+  note("A2 A2 A2 A2").s("sawtooth").cutoff(800)
+    .sometimes(x => x.distort(0.3)),
+
+  // Chords
+  note("<A E F#m D>").s("sawtooth").struct("1 ~ 1 ~").release(0.1).gain(0.6),
+
+  // Anitta vocal-style melody - every 2 cycles shift up an octave
+  note("c4 b5 a4 d6 e4 d4 e6 f6").s("triangle").room(0.3).gain(0.5)
+    .every(2, x => x.add(note(12))),
+
+  // Melody layer - rarely glitch for texture
+  note("d4 c3 d4 c4 b4 a4 g4 f4").s("triangle")
+    .struct("~ 1 ~ 1 1 ~ 1 ~").delay(0.25).room(0.3).gain(0.5)
+    .rarely(x => x.crush(6))
+
+).gain(0.8).slow(1.12).lpf(930).room(0.21).fast(1.08).lpf(1320).room(0.08).gain(1.08).swing(0.7)
+
+//8.Prompt: apply orbits for a surround system
+//Model's Reasoning: Surround system mapped across 7 orbits:
+                                                                                        
+  ┌───────┬──────────────────┬─────────────────────────────────────┐                       
+  │ Orbit │ Speaker Position │                Layer                │
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 0     │ Center           │ Kick — anchored front               │
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 1     │ Front L/R        │ Snare/clap — panning slowly         │                       
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 2     │ Rear L/R         │ Hi-hats — sweeping behind the crowd │
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 3     │ Subwoofer (LFE)  │ Bass — pure low-end punch           │
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 4     │ Front Wide       │ Chords — spreading across the stage │
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 5     │ Surround Left    │ Vocal melody — circling left        │
+  ├───────┼──────────────────┼─────────────────────────────────────┤                       
+  │ 6     │ Surround Right   │ Lead melody — circling right        │
+  └───────┴──────────────────┴─────────────────────────────────────┘                       
+
+//Each orbit routes to a separate audio output — make sure your DAW/audio interface has multi-channel output configured to catch all 7 channels. Want to save this or push it further?
+
+// brazilian funk pattern in A at 130 BPM - surround system orbits
+setcpm(130)
+
+stack(
+  // Orbit 0 - CENTER: Kick drum (front center speaker)
+  s("bd*4")
+    .every(4, x => x.fast(2))
+    .orbit(0),
+
+  // Orbit 1 - FRONT LEFT/RIGHT: Snare + clap (stereo front)
+  s("~ cp ~ cp")
+    .sometimes(x => x.crush(8))
+    .pan(sine.range(0, 1).slow(8))
+    .orbit(1),
+
+  // Orbit 2 - REAR LEFT/RIGHT: Hi-hats sweep behind audience
+  s("hh*8, ~ hh ~ hh, ~ ~ oh ~")
+    .gain(0.4).hpf(5000)
+    .every(3, x => x.rev())
+    .pan(sine.range(0, 1).slow(4))
+    .orbit(2),
+
+  // Orbit 3 - SUBWOOFER / LFE: Bass (low end punch)
+  note("A2 A2 A2 A2").s("sawtooth").cutoff(800)
+    .sometimes(x => x.distort(0.3))
+    .orbit(3),
+
+  // Orbit 4 - FRONT WIDE: Chords spread across front stage
+  note("<A E F#m D>").s("piano").struct("1 ~ 1 ~").release(0.1).gain(0.6)
+    .pan(saw.range(-1, 1).slow(16))
+    .orbit(4),
+
+  // Orbit 5 - SURROUND LEFT: Anitta vocal melody circling left
+  note("c4 b5 a4 d6 e4 d4 e6 f6").s("triangle").room(0.3).gain(0.5)
+    .every(2, x => x.add(note(12)))
+    .pan(sine.range(0, 0.4).slow(6))
+    .orbit(5),
+
+  // Orbit 6 - SURROUND RIGHT: Lead melody circling right
+  note("d4 c3 d4 c4 b4 a4 g4 f4").s("triangle")
+    .struct("~ 1 ~ 1 1 ~ 1 ~").delay(0.25).room(0.4).gain(0.5)
+    .rarely(x => x.crush(6))
+    .pan(sine.range(0.6, 1).slow(6))
+    .orbit(6)
+
+).gain(0.8).slow(1.12).lpf(1320).room(0.08).gain(1.08).swing(0.7)
+
+//8.Prompt: apply an arrangement based on brazilian funk bar divisions.
+// ARRANGEMENT - Brazilian Funk / Baile Funk Rio - Surround System
+
+setcpm(130)
+
+// === LAYERS ===
+const kick = s("bd*4").every(4, x => x.fast(2)).orbit(0)
+const snare = s("~ cp ~ cp").sometimes(x => x.crush(8)).pan(sine.range(0,1).slow(8)).orbit(1)
+const hats = s("hh*8, ~ hh ~ hh, ~ ~ oh ~").gain(0.4).hpf(5000).every(3, x => x.rev()).pan(sine.range(0,1).slow(4)).orbit(2)
+const bass = note("A2 A2 A2 A2").s("sawtooth").cutoff(800).sometimes(x => x.distort(0.3)).orbit(3)
+const chords = note("<A E F#m D>").s("piano").struct("1 ~ 1 ~").release(0.1).gain(0.6).pan(saw.range(-1,1).slow(16)).orbit(4)
+const vox = note("c4 b5 a4 d6 e4 d4 e6 f6").s("triangle").room(0.3).gain(0.5).every(2, x => x.add(note(12))).pan(sine.range(0,0.4).slow(6)).orbit(5)
+const lead = note("d4 c3 d4 c4 b4 a4 g4 f4").s("triangle").struct("~ 1 ~ 1 1 ~ 1 ~").delay(0.25).room(0.4).gain(0.5).rarely(x => x.crush(6)).pan(sine.range(0.6,1).slow(6)).orbit(6)
+
+// === ARRANGEMENT ===
+arrange(
+  // INTRO (8 cycles) - kick + hats only, building tension
+  [8,  stack(kick, hats).gain(0.6)],
+
+  // BUILD (8 cycles) - add bass and snare
+  [8,  stack(kick, snare, hats, bass).gain(0.7)],
+
+  // DROP (16 cycles) - full stack, maximum dancefloor energy
+  [16, stack(kick, snare, hats, bass, chords, vox, lead).gain(0.8).swing(0.7)],
+
+  // BREAK (8 cycles) - strip to chords + vox, let the crowd breathe
+  [8,  stack(chords, vox, bass.gain(0.3)).lpf(600).room(0.4).gain(0.5)],
+
+  // BUILD 2 (4 cycles) - hats + bass creep back in
+  [4,  stack(kick, hats, bass, vox).gain(0.7).swing(0.5)],
+
+  // OUTRO / RE-DROP (16 cycles) - full stack back, harder swing
+  [16, stack(kick, snare, hats, bass, chords, vox, lead).gain(0.9).swing(0.8).room(0.1)]
+
+).lpf(1320)
+
+
