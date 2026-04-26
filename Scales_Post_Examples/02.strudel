@@ -1,0 +1,297 @@
+// Full Techno — A Harmonic Minor / 138 BPM
+setcps(138/60/4)
+
+stack(
+  // ── KICK: tight 4-on-floor ──
+  s("bd*4").bank("tr909").gain(0.92).lpf(200),
+
+  // ── CLAP + SNARE ──
+  s("~ cp ~ cp").bank("tr909").gain(0.78).room(0.15),
+  s("~ ~ ~ sn").bank("tr909").gain(0.55).room(0.2),
+
+  // ── HATS: driving 8th + 16th variation ──
+  s("hh*8").bank("tr909").gain("<0.28 0.22 0.32 0.18>").pan(sine.range(0.3,0.7)),
+  s("oh*<2 1 2 1>").bank("tr909").gain(0.18).pan(0.6),
+
+  // ── EUCLIDEAN PERC ──
+  s("mt").euclid(3,8).gain(0.38).cutoff(500).pan(0.25),
+  s("rim").euclid(5,16).gain(0.3).room(0.3).pan(0.72),
+
+  // ── ACID BASS: harmonic minor movement ──
+  note("<a2 a2 [a2 c3] [e2 g2] a2 a2 [f2 a2] [e2 d3]>")
+    .s("sawtooth")
+    .cutoff(perlin.range(300, 1800))
+    .resonance(18)
+    .gain(0.72)
+    .dec(0.15)
+    .distort(0.2),
+
+  // ── SUB BASS: locked to kick ──
+  note("a1*4")
+    .s("sine")
+    .gain(0.5)
+    .dec(0.12)
+    .lpf(120),
+
+  // ── CHORDS: stab filter sweep ──
+  note("<[a3,c4,e4] ~ [f3,a3,c4] ~ [c#3,e3,g#3] ~ [g#3,b3,e4] ~>")
+    .s("sawtooth")
+    .lpf(perlin.range(400, 1200))
+    .resonance(8)
+    .gain(0.32)
+    .room(0.45)
+    .struct("x ~ x ~")
+    .slow(2),
+
+  // ── MELODY: dark harmonic minor run ──
+  note("<b4 ~ a4 ~ f4 ~ g#4 ~ f4 g#4 ~ f4 e4 ~ ~ ~>")
+    .s("triangle")
+    .gain(0.42)
+    .delay(0.3)
+    .delayt(0.375)
+    .room(0.4)
+    .slow(2),
+
+  // ── ATMOSPHERE: dark pad ──
+  note("<[a2,e3] ~ ~ ~ [f2,c3] ~ ~ ~>")
+    .s("sine")
+    .gain(0.2)
+    .room(0.95)
+    .lpf(600)
+    .slow(2),
+
+  // ── TEXTURE: noise shimmer ──
+  s("hh*<3 4 6 4>")
+    .gain(perlin.range(0.06, 0.16))
+    .lpf(perlin.range(5000, 14000))
+    .pan(perlin.range(0.1, 0.9))
+)
+
+create a complete electronic techn cool song for me                                                                               
+
+⏺ strudel - compose (MCP)(style: "techno", key: "a", tempo: 138, auto_play: false)
+  ⎿  {
+       "success": true,
+       "pattern": "// techno pattern in a at 138 BPM\n    // scale: harmonic_minor | tags: dramatic\nsetcpm(138)\n\nstack(\n  /
+     … +9 lines (ctrl+o to expand)
+
+⏺ strudel - get_pattern (MCP)
+  ⎿  // techno pattern in a at 138 BPM
+         // scale: harmonic_minor | tags: dramatic
+     setcpm(138)
+     … +14 lines (ctrl+o to expand)
+
+⏺ Good base. Now I'll expand it into a proper full techno track with multiple drum layers, acid bass, moving filter, and atmosphere:
+
+⏺ strudel - write (MCP)(pattern: "\n// Full Techno — A Harmonic Minor / 138 BPM\nsetcps(138/60/4)\n\nstack(\n  // ── KICK: tight
+                       4-on-floor ──\n  s(\"bd*4\").bank(\"tr909\").gain(0.92).lpf(200),\n\n  // ── CLAP + SNARE ──\n  s(\"~ cp ~
+                       cp\").bank(\"tr909\").gain(0.78).room(0.15),\n  s(\"~ ~ ~ sn\").bank(\"tr909\").gain(0.55).room(0.2),\n\n  //
+                        ── HATS: driving 8th + 16th variation ──\n  s(\"hh*8\").bank(\"tr909\").gain(\"<0.28 0.22 0.32
+                       0.18>\").pan(sine.range(0.3,0.7)),\n  s(\"oh*<2 1 2 1>\").bank(\"tr909\").gain(0.18).pan(0.6),\n\n  // ──
+                       EUCLIDEAN PERC ──\n  s(\"mt\").euclid(3,8).gain(0.38).cutoff(500).pan(0.25),\n
+                       s(\"rim\").euclid(5,16).gain(0.3).room(0.3).pan(0.72),\n\n  // ── ACID BASS: harmonic minor movement ──\n
+                       note(\"<a2 a2 [a2 c3] [e2 g2] a2 a2 [f2 a2] [e2 d3]>\")\n    .s(\"sawtooth\")\n    .cutoff(perlin.range(300,
+                       1800))\n    .resonance(18)\n    .gain(0.72)\n    .dec(0.15)\n    .distort(0.2),\n\n  // ── SUB BASS: locked
+                       to kick ──\n  note(\"a1*4\")\n    .s(\"sine\")\n    .gain(0.5)\n    .dec(0.12)\n    .lpf(120),\n\n  // ──
+                       CHORDS: stab filter sweep ──\n  note(\"<[a3,c4,e4] ~ [f3,a3,c4] ~ [c#3,e3,g#3] ~ [g#3,b3,e4] ~>\")\n
+                       .s(\"sawtooth\")\n    .lpf(perlin.range(400, 1200))\n    .resonance(8)\n    .gain(0.32)\n    .room(0.45)\n
+                        .struct(\"x ~ x ~\")\n    .slow(2),\n\n  // ── MELODY: dark harmonic minor run ──\n  note(\"<b4 ~ a4 ~ f4 ~
+                       g#4 ~ f4 g#4 ~ f4 e4 ~ ~ ~>\")\n    .s(\"triangle\")\n    .gain(0.42)\n    .delay(0.3)\n    .delayt(0.375)\n
+                          .room(0.4)\n    .slow(2),\n\n  // ── ATMOSPHERE: dark pad ──\n  note(\"<[a2,e3] ~ ~ ~ [f2,c3] ~ ~ ~>\")\n
+                          .s(\"sine\")\n    .gain(0.2)\n    .room(0.95)\n    .lpf(600)\n    .slow(2),\n\n  // ── TEXTURE: noise
+                       shimmer ──\n  s(\"hh*<3 4 6 4>\")\n    .gain(perlin.range(0.06, 0.16))\n    .lpf(perlin.range(5000, 14000))\n
+                           .pan(perlin.range(0.1, 0.9))\n)\n", auto_play: true)
+  ⎿  Pattern written (1695 chars). Playing.
+
+⏺ Full techno track running. Here's what's in it:
+
+  ┌────────────────┬─────────────────────────────────────────────────────────────────┐
+  │     Layer      │                             Detail                              │
+  ├────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Kick           │ TR909, tight 4-on-floor, low-passed                             │
+  ├────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Clap + Snare   │ Clap on 2/4, ghost snare on 4                                   │
+  ├────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Hats           │ 8th note driving hats + open hat variation                      │
+  ├────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Euclidean perc │ 3/8 mid tom + 5/16 rimshot polyrhythm                           │
+  ├────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Acid bass      │ Sawtooth, harmonic minor movement, perlin LPF sweep + resonance │
+  ├────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Sub bass       │ Sine locked to kick pulse                                       │
+  ├────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Chords         │ Am → F → C# → G# stabs, filter sweep                            │
+  ├────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Melody         │ Harmonic minor run, 3/8 delay                                   │
+  ├────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Pad            │ Dark sine drone underneath                                      │
+  ├────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Texture        │ Noise shimmer, random filter + pan                              │
+  └────────────────┴─────────────────────────────────────────────────────────────────┘
+
+  Want to add a drop, breakdown, or push the energy up?
+
+✻ Churned for 34s
+
+❯ can you add an alien scale but generate as textura com escalas                                                                    
+
+⏺ strudel - generate_scale (MCP)(root: "a", scale: "altered")
+  ⎿  Error: Invalid scale name: altered
+
+⏺ strudel - generate_scale (MCP)(root: "a", scale: "whole tone")
+  ⎿  Error: Invalid scale name: whole tone
+
+⏺ strudel - generate_scale (MCP)(root: "a", scale: "ultralocrian")
+  ⎿  Error: Invalid scale name: ultralocrian
+
+⏺ strudel - generate_scale (MCP)(root: "a", scale: "augmented")
+  ⎿  Error: Invalid scale name: augmented
+
+⏺ strudel - generate_scale (MCP)(root: "a", scale: "enigmatic")
+  ⎿  a enigmatic scale: A, A#, C#, D#, F, G, G#
+
+⏺ strudel - generate_scale (MCP)(root: "a", scale: "prometheus")
+  ⎿  a prometheus scale: A, B, C#, D#, F#, G
+
+⏺ Two alien scales locked:
+  - Enigmatic A, A#, C#, D#, F, G, G# — Verdi's forbidden scale, chromatic clusters
+  - Prometheus A, B, C#, D#, F#, G — Scriabin's mystic chord scale
+
+  Using both as floating textures over the techno:
+
+⏺ strudel - write (MCP)(pattern: "\n// Full Techno — A Harmonic Minor / 138 BPM + Alien Textures\nsetcps(138/60/4)\n\nstack(\n  //
+                       ── KICK ──\n  s(\"bd*4\").bank(\"tr909\").gain(0.92).lpf(200),\n\n  // ── CLAP + SNARE ──\n  s(\"~ cp ~
+                       cp\").bank(\"tr909\").gain(0.78).room(0.15),\n  s(\"~ ~ ~ sn\").bank(\"tr909\").gain(0.55).room(0.2),\n\n  //
+                        ── HATS ──\n  s(\"hh*8\").bank(\"tr909\").gain(\"<0.28 0.22 0.32 0.18>\").pan(sine.range(0.3,0.7)),\n
+                       s(\"oh*<2 1 2 1>\").bank(\"tr909\").gain(0.18).pan(0.6),\n\n  // ── EUCLIDEAN PERC ──\n
+                       s(\"mt\").euclid(3,8).gain(0.38).cutoff(500).pan(0.25),\n
+                       s(\"rim\").euclid(5,16).gain(0.3).room(0.3).pan(0.72),\n\n  // ── ACID BASS ──\n  note(\"<a2 a2 [a2 c3] [e2
+                       g2] a2 a2 [f2 a2] [e2 d3]>\")\n    .s(\"sawtooth\")\n    .cutoff(perlin.range(300, 1800))\n
+                       .resonance(18)\n    .gain(0.72)\n    .dec(0.15)\n    .distort(0.2),\n\n  // ── SUB BASS ──\n
+                       note(\"a1*4\")\n    .s(\"sine\")\n    .gain(0.5)\n    .dec(0.12)\n    .lpf(120),\n\n  // ── CHORDS ──\n
+                       note(\"<[a3,c4,e4] ~ [f3,a3,c4] ~ [c#3,e3,g#3] ~ [g#3,b3,e4] ~>\")\n    .s(\"sawtooth\")\n
+                       .lpf(perlin.range(400, 1200))\n    .resonance(8)\n    .gain(0.32)\n    .room(0.45)\n    .struct(\"x ~ x
+                       ~\")\n    .slow(2),\n\n  // ── MELODY ──\n  note(\"<b4 ~ a4 ~ f4 ~ g#4 ~ f4 g#4 ~ f4 e4 ~ ~ ~>\")\n
+                       .s(\"triangle\")\n    .gain(0.42)\n    .delay(0.3)\n    .delayt(0.375)\n    .room(0.4)\n    .slow(2),\n\n  //
+                        ── ALIEN TEXTURE 1: Enigmatic high drift ──\n  // A, A#, C#, D#, F, G, G# — chromatic alien shimmer\n
+                       note(\"<a5 ~ a#5 ~ ~ c#5 ~ d#5 ~ ~ f5 ~ g5 ~ g#5 ~>\")\n    .s(\"sine\")\n    .gain(perlin.range(0.08,
+                       0.22))\n    .pan(perlin.range(0.0, 1.0))\n    .room(0.98)\n    .delay(0.7)\n    .delayt(0.666)\n
+                       .lpf(perlin.range(2000, 8000))\n    .slow(4),\n\n  // ── ALIEN TEXTURE 2: Prometheus mid-float pad ──\n  //
+                       A, B, C#, D#, F#, G — Scriabin mystic cluster\n  note(\"<[a3,c#4,f#4] ~ ~ ~ ~ ~ ~ ~ [b3,d#4,g4] ~ ~ ~ ~ ~ ~
+                       ~>\")\n    .s(\"sawtooth\")\n    .lpf(perlin.range(300, 900))\n    .resonance(6)\n    .gain(0.14)\n
+                       .room(0.99)\n    .delay(0.65)\n    .slow(4),\n\n  // ── ALIEN TEXTURE 3: Enigmatic low sub drift ──\n
+                       note(\"<f2 ~ ~ ~ g#2 ~ ~ ~ a#2 ~ ~ ~ d#2 ~ ~ ~>\")\n    .s(\"sine\")\n    .gain(0.18)\n    .lpf(200)\n
+                       .room(0.9)\n    .slow(4),\n\n  // ── TEXTURE: noise shimmer ──\n  s(\"hh*<3 4 6 4>\")\n
+                       .gain(perlin.range(0.06, 0.16))\n    .lpf(perlin.range(5000, 14000))\n    .pan(perlin.range(0.1, 0.9))\n)\n",
+                        auto_play: true)
+  ⎿  Pattern written (2257 chars). Playing.
+
+⏺ Alien textures injected. Here's what they do:       
+                                                                                          
+  ┌───────────────────┬───────────────┬─────────────────────────────────────────────────────────────────────────────────────────┐
+  │      Texture      │     Scale     │                                        Character                                        │   
+  ├───────────────────┼───────────────┼─────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Enigmatic high    │ A Enigmatic   │ Single notes floating at half-speed, perlin gain + pan, random filter sweep — feels     │   
+  │ drift             │               │ like radio signals from deep space                                                      │
+  ├───────────────────┼───────────────┼─────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Prometheus mid    │ A Prometheus  │ Mystic chord clusters [A,C#,F#] → [B,D#,G], barely audible, long reverb tail — Scriabin │
+  │ pad               │               │  in a warehouse                                                                         │
+  ├───────────────────┼───────────────┼─────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Enigmatic sub     │ A Enigmatic   │ Sub-register root movement F→G#→A#→D#, slow 4-bar cycle — gravity shifting underneath   │
+  │ drift             │ low           │                                                                                         │
+  └───────────────────┴───────────────┴─────────────────────────────────────────────────────────────────────────────────────────┘
+
+  All three textures run at slow(4) — 4x longer than the main pattern, so they drift in and out of phase with the techno grid. Alien
+   by design. Want to push the texture further or bring in a breakdown?
+
+// Full Techno — A Harmonic Minor / 138 BPM + Alien Textures
+setcps(138/60/4)
+
+stack(
+  // ── KICK ──
+  s("bd*4").bank("tr909").gain(0.92).lpf(200),
+
+  // ── CLAP + SNARE ──
+  s("~ cp ~ cp").bank("tr909").gain(0.78).room(0.15),
+  s("~ ~ ~ sn").bank("tr909").gain(0.55).room(0.2),
+
+  // ── HATS ──
+  s("hh*8").bank("tr909").gain("<0.28 0.22 0.32 0.18>").pan(sine.range(0.3,0.7)),
+  s("oh*<2 1 2 1>").bank("tr909").gain(0.18).pan(0.6),
+
+  // ── EUCLIDEAN PERC ──
+  s("mt").euclid(3,8).gain(0.38).cutoff(500).pan(0.25),
+  s("rim").euclid(5,16).gain(0.3).room(0.3).pan(0.72),
+
+  // ── ACID BASS ──
+  note("<a2 a2 [a2 c3] [e2 g2] a2 a2 [f2 a2] [e2 d3]>")
+    .s("sawtooth")
+    .cutoff(perlin.range(300, 1800))
+    .resonance(18)
+    .gain(0.72)
+    .dec(0.15)
+    .distort(0.2),
+
+  // ── SUB BASS ──
+  note("a1*4")
+    .s("sine")
+    .gain(0.5)
+    .dec(0.12)
+    .lpf(120),
+
+  // ── CHORDS ──
+  note("<[a3,c4,e4] ~ [f3,a3,c4] ~ [c#3,e3,g#3] ~ [g#3,b3,e4] ~>")
+    .s("sawtooth")
+    .lpf(perlin.range(400, 1200))
+    .resonance(8)
+    .gain(0.32)
+    .room(0.45)
+    .struct("x ~ x ~")
+    .slow(2),
+
+  // ── MELODY ──
+  note("<b4 ~ a4 ~ f4 ~ g#4 ~ f4 g#4 ~ f4 e4 ~ ~ ~>")
+    .s("triangle")
+    .gain(0.42)
+    .delay(0.3)
+    .delayt(0.375)
+    .room(0.4)
+    .slow(2),
+
+  // ── ALIEN TEXTURE 1: Enigmatic high drift ──
+  // A, A#, C#, D#, F, G, G# — chromatic alien shimmer
+  note("<a5 ~ a#5 ~ ~ c#5 ~ d#5 ~ ~ f5 ~ g5 ~ g#5 ~>")
+    .s("sine")
+    .gain(perlin.range(0.08, 0.22))
+    .pan(perlin.range(0.0, 1.0))
+    .room(0.98)
+    .delay(0.7)
+    .delayt(0.666)
+    .lpf(perlin.range(2000, 8000))
+    .slow(4),
+
+  // ── ALIEN TEXTURE 2: Prometheus mid-float pad ──
+  // A, B, C#, D#, F#, G — Scriabin mystic cluster
+  note("<[a3,c#4,f#4] ~ ~ ~ ~ ~ ~ ~ [b3,d#4,g4] ~ ~ ~ ~ ~ ~ ~>")
+    .s("sawtooth")
+    .lpf(perlin.range(300, 900))
+    .resonance(6)
+    .gain(0.14)
+    .room(0.99)
+    .delay(0.65)
+    .slow(4),
+
+  // ── ALIEN TEXTURE 3: Enigmatic low sub drift ──
+  note("<f2 ~ ~ ~ g#2 ~ ~ ~ a#2 ~ ~ ~ d#2 ~ ~ ~>")
+    .s("sine")
+    .gain(0.18)
+    .lpf(200)
+    .room(0.9)
+    .slow(4),
+
+  // ── TEXTURE: noise shimmer ──
+  s("hh*<3 4 6 4>")
+    .gain(perlin.range(0.06, 0.16))
+    .lpf(perlin.range(5000, 14000))
+    .pan(perlin.range(0.1, 0.9))
+)
