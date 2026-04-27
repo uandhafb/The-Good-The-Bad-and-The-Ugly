@@ -282,10 +282,6 @@ src/
 patterns/                # Saved/generated pattern data
 ```
 
-## License
-
-MIT - see [LICENSE](LICENSE).
-
 ## Acknowledgments
 
 - **Original creator:** [William Zujkowski](https://github.com/williamzujkowski)
