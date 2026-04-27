@@ -1,4 +1,4 @@
-# Claude MCP live Coding
+# Claude MCP Live Coding
 
 A Strudel MCP server LLM-assisted live coding and pattern generation with Claude.
 
