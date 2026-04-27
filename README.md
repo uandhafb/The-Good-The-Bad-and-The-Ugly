@@ -1,4 +1,4 @@
-# PIM LC MCP
+# Claude MCP live Coding
 
 A Strudel MCP server LLM-assisted live coding and pattern generation with Claude.
 
