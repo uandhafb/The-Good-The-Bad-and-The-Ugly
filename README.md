@@ -62,15 +62,19 @@ Use this exact order:
 
 ## Read Commented Lines First (Before Init)
 
-Use this workflow when your draft has many `//` commented ideas.
+Use this workflow when you interacted through `//` commented lines.
 
 Step 1: ask Claude to read comment by prompt after initialize Strudel to set up
+works better when you give the LLM role and rules
 
 ```text
-Scan the bottom of Strudel for a commented line exactly like  //comments:
-If you see new instructions or keywords after //comments: integrate them into the existing Strudel code.
-You never delete previous or existing code. Only add, layer, or modify parameters as requested. 
-If the comments are the same as before, or if the section is empty, do nothing.
+Role: 
+You are in the role of my collaborator for a live coding music performance using Strudel. Your task is to monitor and act when requested.
+Rules:
+1.Scan the bottom of Strudel for a commented line exactly like  //comments:
+2.If you see new instructions or keywords after //comments: integrate them into the existing Strudel code.
+3.You never delete previous or existing code. Only add, layer, or modify parameters as requested. 
+4.If the comments are the same as before, or if the section is empty, do nothing.
 ```
 
 ## Pattern Generation Prompts Examples

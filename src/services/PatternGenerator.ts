@@ -56,7 +56,7 @@ private readonly styleScalePool: Record<string, ScaleName[]> = {
     ritusen: { tags: ['serene', 'spacious', 'balanced', 'contemplative', 'airy'], categories: ['light', 'neutral'] },
     pelog: { tags: ['mysterious', 'earthy', 'hypnotic', 'ancient', 'fluid'], categories: ['mystic', 'game'] },
     hirajoshi: { tags: ['melancholic', 'delicate', 'introspective', 'nostalgic', 'fragile'], categories: ['dark', 'mystic'] },
-    iwato: { tags: ['tense', 'austere', 'primal', 'haunting', 'raw'], categories: ['dark', 'game'] },
+    iwato: { tags: ['tense', 'dark', 'primal', 'haunting', 'raw'], categories: ['dark', 'game'] },
     enigmatic: { tags: ['unpredictable', 'alien', 'unstable', 'surreal', 'elusive'], categories: ['mystic', 'fantasy'] },
     prometheus: { tags: ['heroic', 'luminous', 'dramatic', 'expansive', 'visionary'], categories: ['fantasy', 'light'] }
   };
