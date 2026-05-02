@@ -28,8 +28,7 @@ This fork keeps the original spirit and extends it with your own workflow and st
 
 ```bash
 # 1) Clone your fork
-git clone https://github.com/uandhafb/PIM_LC_MCP.git
-cd PIM_LC_MCP
+git clone 
 
 # 2) Install dependencies
 npm install
