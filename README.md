@@ -288,3 +288,10 @@ patterns/                # Saved/generated pattern data
 - [TidalCycles](https://tidalcycles.org) - pattern language inspiration
 - [Anthropic](https://anthropic.com) - Claude + MCP ecosystem
 - [Playwright](https://playwright.dev) - browser automation
+
+## License
+AGPL-3.0-or-later — see LICENSE for the full text.
+
+This project depends on @strudel/core, @strudel/mini, @strudel/tonal, and @strudel/transpiler, which are AGPL-3.0 licensed by the upstream Strudel project. Since we import from those packages and redistribute the combined work via npm, this project must be distributed under the same copyleft terms. If you fork or redistribute, you must keep the AGPL license and provide source access to any network-accessible users (AGPL §13).
+
+Earlier versions of this package (including @williamzujkowski/strudel-mcp-server prior to deprecation) shipped with an MIT declaration — that was incorrect given the AGPL dependencies. v2.0.0 of @williamzujkowski/live-coding-music-mcp corrects the license to AGPL-3.0-or-later. v1.0.0 of this package is deprecated; install v2.0.0 or later (current: v4.0.0).
