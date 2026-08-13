@@ -1,4 +1,4 @@
-GPL-3.0-or-later — see LICENSE for the full text.
+AGPL-3.0-or-later. — see LICENSE for the full text.
 
 This project depends on @strudel/core, @strudel/mini, @strudel/tonal, and @strudel/transpiler, which are AGPL-3.0 licensed by the upstream Strudel project. Since we import from those packages and redistribute the combined work via npm, this project must be distributed under the same copyleft terms. If you fork or redistribute, you must keep the AGPL license and provide source access to any network-accessible users (AGPL §13).
 
